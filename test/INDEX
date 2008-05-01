@@ -1,0 +1,15 @@
+# Index for testcases
+#
+# Test		Description				DataDir
+
+charset		Charset initialisation/finalisation
+parserutils	Library initialisation/finalisation
+aliases		Encoding alias handling
+cscodec		Charset codec implementation		cscodec
+filter		Input stream filtering
+inputstream	Inputstream handling			input
+
+# Regression tests
+regression/cscodec-segv	Segfault in charset codecs
+regression/filter-segv	Segfault in input filtering
+regression/stream-nomem	Inputstream buffer expansion
