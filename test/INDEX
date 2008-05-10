@@ -6,6 +6,8 @@ charset		Charset initialisation/finalisation
 parserutils	Library initialisation/finalisation
 aliases		Encoding alias handling
 cscodec		Charset codec implementation		cscodec
+dict		Dictionary handling
+rbtree		Red-black tree implementation
 filter		Input stream filtering
 inputstream	Inputstream handling			input
 
