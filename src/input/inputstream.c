@@ -235,7 +235,8 @@ uintptr_t parserutils_inputstream_peek_slow(parserutils_inputstream *stream,
 
 	/* Refill utf8 buffer from raw buffer */
 	error = parserutils_inputstream_refill_buffer(s);
-	if (error != PARSERUTILS_OK)
+	if (error != PARSERUTILS_OK || 
+			s->public.cursor + offset == s->public.utf8->length)
 		return PARSERUTILS_INPUTSTREAM_OOD;
 
 	/* Now try the read */

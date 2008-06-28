@@ -204,6 +204,16 @@ parserutils_error parserutils_filter_process_chunk(parserutils_filter *input,
 				if (ret != (size_t) -1 || errno != EILSEQ)
 					break;
 
+				if (*outlen < 3)
+					return PARSERUTILS_NOMEM;
+
+				(*output)[0] = 0xef;
+				(*output)[1] = 0xbf;
+				(*output)[2] = 0xbd;
+
+				*output += 3;
+				*outlen -= 3;
+
 				(*data)++;
 				(*len)--;
 			}
