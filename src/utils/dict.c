@@ -253,7 +253,7 @@ static void dict_print(const void *key, const void *value, int depth)
 	while (depth-- > 0)
 		putchar(' ');
 
-	printf("'%.*s'\n", e->len, e->data);
+	printf("'%.*s'\n", (int)e->len, e->data);
 }
 
 /**

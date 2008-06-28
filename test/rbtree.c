@@ -15,7 +15,7 @@ static void *myrealloc(void *ptr, size_t len, void *pw)
 
 static int mycmp(const void *a, const void *b)
 {
-	return ((const uint32_t) a) - ((const uint32_t) b);
+	return ((intptr_t) a) - ((intptr_t) b);
 }
 
 int main(int argc, char **argv)
@@ -37,7 +37,8 @@ int main(int argc, char **argv)
 
 	for (int i = G, count = 1; i != 0; i = (i + G) % N, count++) {
 		void *old;
-		assert(parserutils_rbtree_insert(tree, (void *) i, (void *) i, 
+		assert(parserutils_rbtree_insert(tree,
+				(char *) NULL + i, (char *) NULL + i,
 				&old) == PARSERUTILS_OK);
 
 		if ((count % 10000) == 0)
@@ -48,8 +49,8 @@ int main(int argc, char **argv)
 
 	for (int i = 1, count = 1; i < N; i += 2, count++) {
 		void *key, *value;
-		assert(parserutils_rbtree_delete(tree, (void *) i, &key,
-				&value) == PARSERUTILS_OK);
+		assert(parserutils_rbtree_delete(tree, (char *) NULL + i,
+				&key, &value) == PARSERUTILS_OK);
 		if ((count % 10000) == 0)
 			printf("%d\n", count);
 	}
@@ -58,9 +59,9 @@ int main(int argc, char **argv)
 
 	for (int i = 2, count = 1; i < N; i += 2, count++) {
 		void *value = NULL;
-		assert(parserutils_rbtree_find(tree, (void *) i, &value) == 
-				PARSERUTILS_OK);
-		assert(value != NULL && ((int) value) == i);
+		assert(parserutils_rbtree_find(tree, (char *) NULL + i,
+				&value) == PARSERUTILS_OK);
+		assert(value != NULL && value == (char *) NULL + i);
 		if ((count % 10000) == 0)
 			printf("%d\n", count);
 	}
@@ -69,10 +70,10 @@ int main(int argc, char **argv)
 
 	for (int i = 1, count = 1; i < N; i += 2, count++) {
 		void *key, *value = NULL;
-		assert(parserutils_rbtree_find(tree, (void *) i, &value) == 
-				PARSERUTILS_OK);
+		assert(parserutils_rbtree_find(tree, (char *) NULL + i,
+				&value) == PARSERUTILS_OK);
 		assert(value == NULL);
-		assert(parserutils_rbtree_delete(tree, (void *) i,
+		assert(parserutils_rbtree_delete(tree, (char *) NULL + i,
 				&key, &value) == PARSERUTILS_OK);
 		if ((count % 10000) == 0)
 			printf("%d\n", count);
