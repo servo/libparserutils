@@ -20,14 +20,14 @@
 extern const uint8_t numContinuations[256];
 
 /**
- * Convert a UTF-8 multibyte sequence into a single UCS4 character
+ * Convert a UTF-8 multibyte sequence into a single UCS-4 character
  *
  * Encoding of UCS values outside the UTF-16 plane has been removed from
  * RFC3629. This macro conforms to RFC2279, however.
  *
  * \param s      The sequence to process
  * \param len    Length of sequence
- * \param ucs4   Pointer to location to receive UCS4 character (host endian)
+ * \param ucs4   Pointer to location to receive UCS-4 character (host endian)
  * \param clen   Pointer to location to receive byte length of UTF-8 sequence
  * \param error  Location to receive error code
  */
@@ -109,7 +109,7 @@ do {									\
 } while(0)
 
 /**
- * Convert a single UCS4 character into a UTF-8 multibyte sequence
+ * Convert a single UCS-4 character into a UTF-8 multibyte sequence
  *
  * Encoding of UCS values outside the UTF-16 plane has been removed from
  * RFC3629. This macro conforms to RFC2279, however.

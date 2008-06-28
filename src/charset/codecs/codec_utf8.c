@@ -81,7 +81,7 @@ bool charset_utf8_codec_handles_charset(const char *charset)
 }
 
 /**
- * Create a utf8 codec
+ * Create a UTF-8 codec
  *
  * \param charset  The charset to read from / write to
  * \param alloc    Memory (de)allocation function
@@ -118,7 +118,7 @@ parserutils_charset_codec *charset_utf8_codec_create(const char *charset,
 }
 
 /**
- * Destroy a utf8 codec
+ * Destroy a UTF-8 codec
  *
  * \param codec  The codec to destroy
  */
@@ -128,7 +128,7 @@ void charset_utf8_codec_destroy (parserutils_charset_codec *codec)
 }
 
 /**
- * Encode a chunk of UCS4 data into utf8
+ * Encode a chunk of UCS-4 data into UTF-8
  *
  * \param codec      The codec to use
  * \param source     Pointer to pointer to source data
@@ -232,7 +232,7 @@ parserutils_error charset_utf8_codec_encode(parserutils_charset_codec *codec,
 }
 
 /**
- * Decode a chunk of utf8 data into UCS4
+ * Decode a chunk of UTF-8 data into UCS-4
  *
  * \param codec      The codec to use
  * \param source     Pointer to pointer to source data
@@ -352,7 +352,7 @@ parserutils_error charset_utf8_codec_decode(parserutils_charset_codec *codec,
 }
 
 /**
- * Clear a utf8 codec's encoding state
+ * Clear a UTF-8 codec's encoding state
  *
  * \param codec  The codec to reset
  * \return PARSERUTILS_OK on success, appropriate error otherwise
@@ -375,7 +375,7 @@ parserutils_error charset_utf8_codec_reset(parserutils_charset_codec *codec)
 
 
 /**
- * Read a character from the UTF-8 to UCS4 (big endian)
+ * Read a character from the UTF-8 to UCS-4 (big endian)
  *
  * \param c          The codec
  * \param source     Pointer to pointer to source buffer (updated on exit)
@@ -511,10 +511,10 @@ parserutils_error charset_utf8_codec_read_char(charset_utf8_codec *c,
 }
 
 /**
- * Output a UCS4 character
+ * Output a UCS-4 character
  *
  * \param c        Codec to use
- * \param ucs4     UCS4 character (host endian)
+ * \param ucs4     UCS-4 character (host endian)
  * \param dest     Pointer to pointer to output buffer
  * \param destlen  Pointer to output buffer length
  * \return PARSERUTILS_OK          on success,

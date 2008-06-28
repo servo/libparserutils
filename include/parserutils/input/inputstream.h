@@ -30,7 +30,7 @@ typedef parserutils_error (*parserutils_charset_detect_func)(
  */
 typedef struct parserutils_inputstream 
 {
-	parserutils_buffer *utf8;	/**< Buffer containing utf8 data */
+	parserutils_buffer *utf8;	/**< Buffer containing UTF-8 data */
 
 	uint32_t cursor;		/**< Byte offset of current position */
 

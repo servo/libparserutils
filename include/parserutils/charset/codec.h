@@ -23,7 +23,7 @@ typedef struct parserutils_charset_codec parserutils_charset_codec;
  * A codec's error mode determines its behaviour in the face of:
  *
  * + characters which are unrepresentable in the destination charset (if
- *   encoding data) or which cannot be converted to UCS4 (if decoding data).
+ *   encoding data) or which cannot be converted to UCS-4 (if decoding data).
  * + invalid byte sequences (both encoding and decoding)
  *
  * The options provide a choice between the following approaches:
@@ -95,13 +95,13 @@ parserutils_error parserutils_charset_codec_setopt(
 		parserutils_charset_codec_opttype type, 
 		parserutils_charset_codec_optparams *params);
 
-/* Encode a chunk of UCS4 data into a codec's charset */
+/* Encode a chunk of UCS-4 data into a codec's charset */
 parserutils_error parserutils_charset_codec_encode(
 		parserutils_charset_codec *codec,
 		const uint8_t **source, size_t *sourcelen,
 		uint8_t **dest, size_t *destlen);
 
-/* Decode a chunk of data in a codec's charset into UCS4 */
+/* Decode a chunk of data in a codec's charset into UCS-4 */
 parserutils_error parserutils_charset_codec_decode(
 		parserutils_charset_codec *codec,
 		const uint8_t **source, size_t *sourcelen,

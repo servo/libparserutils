@@ -117,7 +117,7 @@ parserutils_error parserutils_charset_codec_setopt(
 }
 
 /**
- * Encode a chunk of UCS4 data into a codec's charset
+ * Encode a chunk of UCS-4 data into a codec's charset
  *
  * \param codec      The codec to use
  * \param source     Pointer to pointer to source data
@@ -142,7 +142,7 @@ parserutils_error parserutils_charset_codec_encode(
 }
 
 /**
- * Decode a chunk of data in a codec's charset into UCS4
+ * Decode a chunk of data in a codec's charset into UCS-4
  *
  * \param codec      The codec to use
  * \param source     Pointer to pointer to source data

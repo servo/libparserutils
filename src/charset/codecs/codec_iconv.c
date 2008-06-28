@@ -161,7 +161,7 @@ void iconv_codec_destroy (parserutils_charset_codec *codec)
 }
 
 /**
- * Encode a chunk of UCS4 data into an iconv-based codec's charset
+ * Encode a chunk of UCS-4 data into an iconv-based codec's charset
  *
  * \param codec      The codec to use
  * \param source     Pointer to pointer to source data
@@ -271,7 +271,7 @@ parserutils_error iconv_codec_encode(parserutils_charset_codec *codec,
 }
 
 /**
- * Decode a chunk of data in an iconv-based codec's charset into UCS4
+ * Decode a chunk of data in an iconv-based codec's charset into UCS-4
  *
  * \param codec      The codec to use
  * \param source     Pointer to pointer to source data
@@ -419,10 +419,10 @@ parserutils_error iconv_codec_reset(parserutils_charset_codec *codec)
 }
 
 /**
- * Output a UCS4 character
+ * Output a UCS-4 character
  *
  * \param c        Codec to use
- * \param ucs4     UCS4 character (big endian)
+ * \param ucs4     UCS-4 character (big endian)
  * \param dest     Pointer to pointer to output buffer
  * \param destlen  Pointer to output buffer length
  * \return PARSERUTILS_OK          on success,
@@ -448,7 +448,7 @@ parserutils_error iconv_codec_output_decoded_char(iconv_codec *c,
 }
 
 /**
- * Read a character from the codec's native charset to UCS4 (big endian)
+ * Read a character from the codec's native charset to UCS-4 (big endian)
  *
  * \param c          The codec
  * \param source     Pointer to pointer to source buffer (updated on exit)
@@ -600,10 +600,10 @@ parserutils_error iconv_codec_read_char(iconv_codec *c,
 }
 
 /**
- * Write a UCS4 character in a codec's native charset
+ * Write a UCS-4 character in a codec's native charset
  *
  * \param c        The codec
- * \param ucs4     The UCS4 character to write (big endian)
+ * \param ucs4     The UCS-4 character to write (big endian)
  * \param dest     Pointer to pointer to output buffer (updated on exit)
  * \param destlen  Pointer to length of output buffer (updated on exit)
  * \return PARSERUTILS_OK       on success,

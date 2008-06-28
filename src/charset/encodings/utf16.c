@@ -16,11 +16,11 @@
 #include <parserutils/charset/utf16.h>
 
 /**
- * Convert a UTF-16 sequence into a single UCS4 character
+ * Convert a UTF-16 sequence into a single UCS-4 character
  *
  * \param s     The sequence to process
  * \param len   Length of sequence
- * \param ucs4  Pointer to location to receive UCS4 character (host endian)
+ * \param ucs4  Pointer to location to receive UCS-4 character (host endian)
  * \param clen  Pointer to location to receive byte length of UTF-16 sequence
  * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
@@ -55,7 +55,7 @@ parserutils_error parserutils_charset_utf16_to_ucs4(const uint8_t *s,
 }
 
 /**
- * Convert a single UCS4 character into a UTF-16 sequence
+ * Convert a single UCS-4 character into a UTF-16 sequence
  *
  * \param ucs4  The character to process (0 <= c <= 0x7FFFFFFF) (host endian)
  * \param s     Pointer to 4 byte long output buffer
