@@ -128,7 +128,7 @@ void charset_utf8_codec_destroy (parserutils_charset_codec *codec)
 }
 
 /**
- * Encode a chunk of UCS-4 data into UTF-8
+ * Encode a chunk of UCS-4 (big endian) data into UTF-8
  *
  * \param codec      The codec to use
  * \param source     Pointer to pointer to source data
@@ -232,7 +232,7 @@ parserutils_error charset_utf8_codec_encode(parserutils_charset_codec *codec,
 }
 
 /**
- * Decode a chunk of UTF-8 data into UCS-4
+ * Decode a chunk of UTF-8 data into UCS-4 (big endian)
  *
  * \param codec      The codec to use
  * \param source     Pointer to pointer to source data
@@ -510,7 +510,7 @@ parserutils_error charset_utf8_codec_read_char(charset_utf8_codec *c,
 }
 
 /**
- * Output a UCS-4 character
+ * Output a UCS-4 character (big endian)
  *
  * \param c        Codec to use
  * \param ucs4     UCS-4 character (host endian)
