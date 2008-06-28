@@ -19,7 +19,7 @@
  * Convert a UTF-16 sequence into a single UCS-4 character
  *
  * \param s     The sequence to process
- * \param len   Length of sequence
+ * \param len   Length of sequence in bytes
  * \param ucs4  Pointer to location to receive UCS-4 character (host endian)
  * \param clen  Pointer to location to receive byte length of UTF-16 sequence
  * \return PARSERUTILS_OK on success, appropriate error otherwise
@@ -38,17 +38,22 @@ parserutils_error parserutils_charset_utf16_to_ucs4(const uint8_t *s,
 	if (*ss < 0xD800 || *ss > 0xDFFF) {
 		*ucs4 = *ss;
 		*clen = 2;
-	} else if (0xD800 <= *ss && *ss <= 0xBFFF) {
+	} else if (0xD800 <= *ss && *ss <= 0xDBFF) {
+		/* High-surrogate code unit.  */
 		if (len < 4)
 			return PARSERUTILS_NEEDDATA;
 
-		if (0xDC00 <= ss[1] && ss[1] <= 0xE000) {
-			*ucs4 = (((s[0] >> 6) & 0x1f) + 1) |
-					((s[0] & 0x3f) | (s[1] & 0x3ff));
+		if (0xDC00 <= ss[1] && ss[1] <= 0xDFFF) {
+			/* We have a valid surrogate pair.  */
+			*ucs4 = (((ss[0] & 0x3FF) << 10) | (ss[1] & 0x3FF))
+				+ (1<<16);
 			*clen = 4;
 		} else {
 			return PARSERUTILS_INVALID;
 		}
+	} else {
+		/* Low-surrogate code unit.  */
+		return PARSERUTILS_INVALID;
 	}
 
 	return PARSERUTILS_OK;

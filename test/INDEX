@@ -5,7 +5,8 @@
 charset		Charset initialisation/finalisation
 parserutils	Library initialisation/finalisation
 aliases		Encoding alias handling
-cscodec		Charset codec implementation		cscodec
+cscodec-utf8	UTF-8 charset codec implementation	cscodec-utf8
+cscodec-utf16	UTF-16 charset codec implementation	cscodec-utf16
 dict		Dictionary handling
 rbtree		Red-black tree implementation
 filter		Input stream filtering
