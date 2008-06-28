@@ -306,6 +306,8 @@ parserutils_error parserutils_inputstream_refill_buffer(
 	/* If this is the first chunk of data, we must detect the charset and
 	 * strip the BOM, if one exists */
 	if (!stream->done_first_chunk) {
+		parserutils_filter_optparams params;
+
 		if (stream->csdetect != NULL) {
 			error = stream->csdetect(stream->raw->data, 
 				stream->raw->length,
@@ -322,6 +324,16 @@ parserutils_error parserutils_inputstream_refill_buffer(
 
 		if (stream->mibenum == 0)
 			abort();
+
+		/* Ensure filter is using the correct encoding */
+		params.encoding.name = 
+			parserutils_charset_mibenum_to_name(stream->mibenum);
+
+		error = parserutils_filter_setopt(stream->input,
+				PARSERUTILS_FILTER_SET_ENCODING, 
+				&params);
+		if (error != PARSERUTILS_OK)
+			return error;
 
 		error = parserutils_inputstream_strip_bom(stream->mibenum, 
 				stream->raw);
