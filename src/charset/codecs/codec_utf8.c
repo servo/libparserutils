@@ -438,7 +438,7 @@ parserutils_error charset_utf8_codec_read_char(charset_utf8_codec *c,
 		if (*sourcelen > INVAL_BUFSIZE)
 			abort();
 
-		memmove(c->inval_buf, (char *) *source, *sourcelen);
+		memmove(c->inval_buf, *source, *sourcelen);
 		c->inval_buf[*sourcelen] = '\0';
 		c->inval_len = *sourcelen;
 
@@ -477,8 +477,7 @@ parserutils_error charset_utf8_codec_read_char(charset_utf8_codec *c,
 				if (*sourcelen > INVAL_BUFSIZE)
 					abort();
 
-				memmove(c->inval_buf, (char *) *source,
-						*sourcelen);
+				memmove(c->inval_buf, *source, *sourcelen);
 				c->inval_buf[*sourcelen] = '\0';
 				c->inval_len = *sourcelen;
 

@@ -517,7 +517,7 @@ parserutils_error iconv_codec_read_char(iconv_codec *c,
 		if (*sourcelen > INVAL_BUFSIZE)
 			abort();
 
-		memmove(c->inval_buf, (const char *) *source, *sourcelen);
+		memmove(c->inval_buf, *source, *sourcelen);
 		c->inval_buf[*sourcelen] = '\0';
 		c->inval_len = *sourcelen;
 
