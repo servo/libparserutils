@@ -161,7 +161,8 @@ parserutils_error parserutils_vector_remove_last(parserutils_vector *vector)
  * \param ctx     Pointer to an integer for the iterator to use as context.
  * \return Pointer to current item, or NULL if no more
  */
-void *parserutils_vector_iterate(parserutils_vector *vector, int32_t *ctx)
+const void *parserutils_vector_iterate(const parserutils_vector *vector, 
+		int32_t *ctx)
 {
 	void *item;
 
