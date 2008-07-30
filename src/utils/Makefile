@@ -35,7 +35,7 @@ d              := $(DIR)
 override CFLAGS := $(CFLAGS) -I$(d)
 
 # Sources
-SRCS_$(d) := buffer.c dict.c errors.c rbtree.c
+SRCS_$(d) := buffer.c dict.c errors.c rbtree.c stack.c vector.c
 
 # Append to sources for component
 SOURCES += $(addprefix $(d), $(SRCS_$(d)))

@@ -11,7 +11,14 @@
 #include <parserutils/errors.h>
 #include <parserutils/functypes.h>
 
-struct parserutils_dict_entry;
+/**
+ * A dictionary entry
+ */
+struct parserutils_dict_entry
+{
+	size_t len;			/**< Length of data, in bytes */
+	uint8_t *data;			/**< Entry data */
+};
 typedef struct parserutils_dict_entry parserutils_dict_entry;
 
 struct parserutils_dict;

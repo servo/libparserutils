@@ -14,15 +14,6 @@
 #include "utils/utils.h"
 
 /**
- * A dictionary entry
- */
-struct parserutils_dict_entry
-{
-	size_t len;			/**< Length of data, in bytes */
-	uint8_t *data;			/**< Entry data */
-};
-
-/**
  * Dictionary object
  */
 struct parserutils_dict
