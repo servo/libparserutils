@@ -378,6 +378,8 @@ parserutils_error filter_set_encoding(parserutils_filter *input,
 
 	input->cd = iconv_open(
 		parserutils_charset_mibenum_to_name(input->int_enc), enc);
+	if (input->cd == (iconv_t) -1)
+		return PARSERUTILS_NOMEM;
 #else
 	if (input->read_codec != NULL)
 		parserutils_charset_codec_destroy(input->read_codec);
