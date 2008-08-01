@@ -197,11 +197,11 @@ int dict_cmp(const void *a, const void *b)
 {
 	const parserutils_dict_entry *aa = (const parserutils_dict_entry *) a;
 	const parserutils_dict_entry *bb = (const parserutils_dict_entry *) b;
-	size_t min_len = min(aa->len, bb->len);
-	int result = 0;
+	int result = aa->len - bb->len;
 
-	if ((result = memcmp(aa->data, bb->data, min_len)) == 0) {
-		result = aa->len - bb->len;
+	/* Sort first by length, and then by data equality */
+	if (result == 0) {
+		result = memcmp(aa->data, bb->data, aa->len);
 	}
 
 	return result;
