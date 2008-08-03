@@ -13,7 +13,7 @@ MV := mv
 ECHO := echo
 MAKE := make
 PERL := perl
-PKGCONFIG := pkg-config
+PKGCONFIG := $(GCCSDK_INSTALL_ENV)/ro-pkg-config
 INSTALL := install
 SED := sed
 LCOV := echo
@@ -23,12 +23,12 @@ GENHTML := echo
 WARNFLAGS := -Wall -Wextra -Wundef -Wpointer-arith -Wcast-align \
 	-Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes \
 	-Wmissing-declarations -Wnested-externs -Werror -pedantic
-CFLAGS += -std=c99 -D_BSD_SOURCE -I$(TOP)/include/ $(WARNFLAGS) \
+override CFLAGS += -std=c99 -D_BSD_SOURCE -I$(TOP)/include/ $(WARNFLAGS) \
 	-mpoke-function-name
 RELEASECFLAGS = $(CFLAGS) -DNDEBUG -O2
 DEBUGCFLAGS = $(CFLAGS) -O0 -g
 ARFLAGS := -cru
-LDFLAGS = -L$(TOP)/
+override LDFLAGS = -L$(TOP)/
 
 CPFLAGS :=
 RMFLAGS := -f
