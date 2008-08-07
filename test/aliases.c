@@ -49,10 +49,19 @@ int main (int argc, char **argv)
 		return 1;
 	}
 
-	printf("%d\n", parserutils_charset_mibenum_from_name(c->name, 
+	printf("%d\n", parserutils_charset_mibenum_from_name(c->name,
 			strlen(c->name)));
 
 	printf("%s\n", parserutils_charset_mibenum_to_name(c->mib_enum));
+
+
+	c = parserutils_charset_alias_canonicalise("u.t.f.8", 7);
+	if (c) {
+		printf("%s %d\n", c->name, c->mib_enum);
+	} else {
+		printf("FAIL - failed finding encoding 'u.t.f.8'\n");
+		return 1;
+	}
 
 	parserutils_charset_aliases_destroy(myrealloc, NULL);
 

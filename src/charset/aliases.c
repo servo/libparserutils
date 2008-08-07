@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <assert.h>
+
 #include "charset/aliases.h"
 #include "utils/utils.h"
 
@@ -32,6 +34,7 @@ static parserutils_error parserutils_charset_create_alias(const char *alias,
 static parserutils_charset_aliases_canon *parserutils_charset_create_canon(
 		const char *canon, uint16_t mibenum, 
 		parserutils_alloc alloc, void *pw);
+static int aliascmp(const char *s1, const char *s2, size_t s2_len);
 static uint32_t parserutils_charset_hash_val(const char *alias, size_t len);
 
 /**
@@ -246,6 +249,54 @@ bool parserutils_charset_mibenum_is_unicode(uint16_t mibenum)
 			mibenum == utf32be || mibenum == utf32le);
 }
 
+#define IS_PUNCT_OR_SPACE(x) \
+		((0x09 <= x && x <= 0x0D) || \
+				(0x20 <= x && x <= 0x2F) || \
+				(0x3A <= x && x <= 0x40) || \
+				(0x5B <= x && x <= 0x60) || \
+				(0x7B <= x && x <= 0x7E))
+
+
+/**
+ * Compare name "s1" to name "s2" (of size s2_len) case-insensitively
+ * and ignoring ASCII punctuation characters.
+ *
+ * See http://www.whatwg.org/specs/web-apps/current-work/#character0
+ *
+ * \param s1		Alias to compare to
+ * \param s2		Alias to compare
+ * \param s2_len	Length of "s2"
+ * \returns 0 if equal, 1 otherwise
+ */
+int aliascmp(const char *s1, const char *s2, size_t s2_len)
+{
+	assert(s2_len != 0);
+
+	size_t s2_pos = 0;
+
+	while (true) {
+		while (IS_PUNCT_OR_SPACE(*s1))
+			s1++;
+		while (IS_PUNCT_OR_SPACE(s2[s2_pos]) &&
+				s2_pos <= s2_len) {
+			s2_pos++;
+		}
+
+		if (s2_pos == s2_len && !*s1)
+			return 0;
+		else if (s2_pos == s2_len || !*s1)
+			break;
+
+		if (tolower(*s1) != tolower(s2[s2_pos]))
+			break;
+		s1++;
+		s2_pos++;
+	}
+
+	return 1;
+}
+
+
 /**
  * Retrieve the canonical form of an alias name
  *
@@ -266,15 +317,13 @@ parserutils_charset_aliases_canon *parserutils_charset_alias_canonicalise(
 	hash = parserutils_charset_hash_val(alias, len);
 
 	for (c = canon_tab[hash]; c; c = c->next)
-		if (c->name_len == len &&
-				strncasecmp(c->name, alias, len) == 0)
+		if (aliascmp(c->name, alias, len) == 0)
 			break;
 	if (c)
 		return c;
 
 	for (a = alias_tab[hash]; a; a = a->next)
-		if (a->name_len == len &&
-				strncasecmp(a->name, alias, len) == 0)
+		if (aliascmp(a->name, alias, len) == 0)
 			break;
 	if (a)
 		return a->canon;
@@ -371,8 +420,13 @@ uint32_t parserutils_charset_hash_val(const char *alias, size_t len)
 	if (alias == NULL)
 		return 0;
 
-	while (len--)
-		h = (h * 33) ^ (*s++ & ~0x20); /* case insensitive */
+	while (len--) {
+		if (IS_PUNCT_OR_SPACE(*s)) {
+			s++;
+		} else {
+			h = (h * 33) ^ (*s++ & ~0x20); /* case insensitive */
+		}
+	}
 
 	return h % HASH_SIZE;
 }
