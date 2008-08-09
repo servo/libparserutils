@@ -278,14 +278,12 @@ int aliascmp(const char *s1, const char *s2, size_t s2_len)
 		while (IS_PUNCT_OR_SPACE(*s1))
 			s1++;
 		while (IS_PUNCT_OR_SPACE(s2[s2_pos]) &&
-				s2_pos <= s2_len) {
+				s2_pos < s2_len) {
 			s2_pos++;
 		}
 
-		if (s2_pos == s2_len && !*s1)
-			return 0;
-		else if (s2_pos == s2_len || !*s1)
-			break;
+		if (s2_pos == s2_len)
+			return (*s1 != '\0') ? 1 : 0;
 
 		if (tolower(*s1) != tolower(s2[s2_pos]))
 			break;
