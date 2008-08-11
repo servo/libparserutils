@@ -250,11 +250,11 @@ bool parserutils_charset_mibenum_is_unicode(uint16_t mibenum)
 }
 
 #define IS_PUNCT_OR_SPACE(x) \
-		((0x09 <= x && x <= 0x0D) || \
-				(0x20 <= x && x <= 0x2F) || \
-				(0x3A <= x && x <= 0x40) || \
-				(0x5B <= x && x <= 0x60) || \
-				(0x7B <= x && x <= 0x7E))
+		((0x09 <= (x) && (x) <= 0x0D) || \
+				(0x20 <= (x) && (x) <= 0x2F) || \
+				(0x3A <= (x) && (x) <= 0x40) || \
+				(0x5B <= (x) && (x) <= 0x60) || \
+				(0x7B <= (x) && (x) <= 0x7E))
 
 
 /**
