@@ -154,3 +154,27 @@ parserutils_error parserutils_buffer_grow(parserutils_buffer *buffer)
 	return PARSERUTILS_OK;
 }
 
+parserutils_error parserutils_buffer_randomise(parserutils_buffer *buffer)
+{
+	if (buffer == NULL)
+		return PARSERUTILS_BADPARM;
+
+#ifndef NDEBUG
+	uint8_t *temp = buffer->alloc(NULL, buffer->allocated, buffer->pw);
+	if (temp == NULL)
+		return PARSERUTILS_NOMEM;
+
+	memcpy(temp, buffer->data, buffer->length);
+
+	memset(buffer->data, 0xff, buffer->length);
+
+	/* Leak the buffer's current data, so we don't reuse it */
+	/* buffer->alloc(buffer->data, 0, buffer->pw); */
+
+	buffer->data = temp;
+#endif
+
+
+	return PARSERUTILS_OK;
+}
+

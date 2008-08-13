@@ -85,6 +85,8 @@ static inline uintptr_t parserutils_inputstream_peek(
 	if (stream == NULL)
 		return PARSERUTILS_INPUTSTREAM_OOD;
 
+	parserutils_buffer_randomise(stream->utf8);
+
 #define IS_ASCII(x) (((x) & 0x80) == 0)
 
 	if (stream->cursor + offset < stream->utf8->length) {

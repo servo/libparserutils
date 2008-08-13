@@ -35,5 +35,7 @@ parserutils_error parserutils_buffer_discard(parserutils_buffer *buffer,
 
 parserutils_error parserutils_buffer_grow(parserutils_buffer *buffer);
 
+parserutils_error parserutils_buffer_randomise(parserutils_buffer *buffer);
+
 #endif
 
