@@ -9,6 +9,9 @@
 #define parserutils_input_inputstream_h_
 
 #include <stdbool.h>
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
 #include <stdlib.h>
 #include <inttypes.h>
 
@@ -86,6 +89,8 @@ static inline uintptr_t parserutils_inputstream_peek(
 		return PARSERUTILS_INPUTSTREAM_OOD;
 
 #ifndef NDEBUG
+	fprintf(stdout, "Peek: len: %lu cur: %lu off: %lu\n",
+			stream->utf8->length, stream->cursor, offset);
 	parserutils_buffer_randomise(stream->utf8);
 #endif
 
@@ -109,9 +114,17 @@ static inline uintptr_t parserutils_inputstream_peek(
 
 	if (stream->cursor + offset == stream->utf8->length ||
 			error == PARSERUTILS_NEEDDATA) {
-		return parserutils_inputstream_peek_slow(stream, 
+		uintptr_t data = parserutils_inputstream_peek_slow(stream, 
 				offset, length);
+#ifndef NDEBUG
+		fprintf(stdout, "clen: %lu\n", *length);
+#endif
+		return data;
 	}
+
+#ifndef NDEBUG
+	fprintf(stdout, "clen: %lu\n", len);
+#endif
 
 	*length = len;
 
@@ -129,6 +142,11 @@ static inline void parserutils_inputstream_advance(
 {
 	if (stream == NULL)
 		return;
+
+#ifndef NDEBUG
+	fprintf(stdout, "Advance: len: %lu cur: %lu bytes: %lu\n",
+			stream->utf8->length, stream->cursor, bytes);
+#endif
 
 	if (bytes > stream->utf8->length - stream->cursor)
 		abort();
