@@ -89,7 +89,7 @@ static inline uintptr_t parserutils_inputstream_peek(
 		return PARSERUTILS_INPUTSTREAM_OOD;
 
 #ifndef NDEBUG
-	fprintf(stdout, "Peek: len: %lu cur: %lu off: %lu\n",
+	fprintf(stdout, "Peek: len: %zu cur: %u off: %zu\n",
 			stream->utf8->length, stream->cursor, offset);
 	parserutils_buffer_randomise(stream->utf8);
 #endif
@@ -144,7 +144,7 @@ static inline void parserutils_inputstream_advance(
 		return;
 
 #ifndef NDEBUG
-	fprintf(stdout, "Advance: len: %lu cur: %lu bytes: %lu\n",
+	fprintf(stdout, "Advance: len: %zu cur: %u bytes: %zu\n",
 			stream->utf8->length, stream->cursor, bytes);
 #endif
 
