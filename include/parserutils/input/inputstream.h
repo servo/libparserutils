@@ -89,8 +89,10 @@ static inline uintptr_t parserutils_inputstream_peek(
 		return PARSERUTILS_INPUTSTREAM_OOD;
 
 #ifndef NDEBUG
+#ifdef VERBOSE_INPUTSTREAM
 	fprintf(stdout, "Peek: len: %zu cur: %u off: %zu\n",
 			stream->utf8->length, stream->cursor, offset);
+#endif
 	parserutils_buffer_randomise(stream->utf8);
 #endif
 
@@ -116,13 +118,13 @@ static inline uintptr_t parserutils_inputstream_peek(
 			error == PARSERUTILS_NEEDDATA) {
 		uintptr_t data = parserutils_inputstream_peek_slow(stream, 
 				offset, length);
-#ifndef NDEBUG
+#if !defined(NDEBUG) && defined(VERBOSE_INPUTSTREAM)
 		fprintf(stdout, "clen: %lu\n", *length);
 #endif
 		return data;
 	}
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) && defined(VERBOSE_INPUTSTREAM)
 	fprintf(stdout, "clen: %lu\n", len);
 #endif
 
@@ -143,7 +145,7 @@ static inline void parserutils_inputstream_advance(
 	if (stream == NULL)
 		return;
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) && defined(VERBOSE_INPUTSTREAM)
 	fprintf(stdout, "Advance: len: %zu cur: %u bytes: %zu\n",
 			stream->utf8->length, stream->cursor, bytes);
 #endif
