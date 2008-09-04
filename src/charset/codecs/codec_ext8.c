@@ -557,10 +557,10 @@ parserutils_error charset_ext8_to_ucs4(charset_ext8_codec *c,
 	if (*s < 0x80) {
 		out = *s;
 	} else {
-		if (c->table[*s] == 0xFFFF)
+		if (c->table[*s - 0x80] == 0xFFFF)
 			return PARSERUTILS_INVALID;
 
-		out = c->table[*s];
+		out = c->table[*s - 0x80];
 	}
 
 	*ucs4 = out;

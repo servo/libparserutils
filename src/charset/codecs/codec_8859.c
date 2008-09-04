@@ -563,10 +563,10 @@ parserutils_error charset_8859_to_ucs4(charset_8859_codec *c,
 	if (*s < 0x80) {
 		out = *s;
 	} else if (*s >= 0xA0) {
-		if (c->table[*s] == 0xFFFF)
+		if (c->table[*s - 0xA0] == 0xFFFF)
 			return PARSERUTILS_INVALID;
 
-		out = c->table[*s];
+		out = c->table[*s - 0xA0];
 	} else {
 		return PARSERUTILS_INVALID;
 	}
