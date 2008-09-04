@@ -14,12 +14,14 @@
 extern parserutils_charset_handler iconv_codec_handler;
 #endif
 
+extern parserutils_charset_handler charset_8859_codec_handler;
 extern parserutils_charset_handler charset_utf8_codec_handler;
 extern parserutils_charset_handler charset_utf16_codec_handler;
 
 static parserutils_charset_handler *handler_table[] = {
 	&charset_utf8_codec_handler,
 	&charset_utf16_codec_handler,
+	&charset_8859_codec_handler,
 #ifdef WITH_ICONV_CODEC
 	&iconv_codec_handler,
 #endif

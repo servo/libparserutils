@@ -25,4 +25,8 @@
 #define UNUSED(x) ((x)=(x))
 #endif
 
+#ifndef N_ELEMENTS
+#define N_ELEMENTS(s) (sizeof((s)) / sizeof((s)[0]))
+#endif
+
 #endif
