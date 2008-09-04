@@ -536,7 +536,7 @@ parserutils_error charset_8859_from_ucs4(charset_8859_codec *c,
 	}
 
 	*(*s++) = out;
-	*len--;
+	(*len)--;
 
 	return PARSERUTILS_OK;
 }

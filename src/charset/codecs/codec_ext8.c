@@ -530,7 +530,7 @@ parserutils_error charset_ext8_from_ucs4(charset_ext8_codec *c,
 	}
 
 	*(*s++) = out;
-	*len--;
+	(*len)--;
 
 	return PARSERUTILS_OK;
 }
