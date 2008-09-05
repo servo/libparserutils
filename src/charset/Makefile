@@ -32,7 +32,7 @@ dirstack_$(sp) := $(d)
 d              := $(DIR)
 
 # Manipulate include paths
-override CFLAGS := $(CFLAGS) -I$(d)
+CFLAGS := $(CFLAGS) -I$(d)
 
 # Sources
 SRCS_$(d) := aliases.c charset.c codec.c

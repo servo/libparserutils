@@ -32,7 +32,7 @@ dirstack_$(sp) := $(d)
 d              := $(DIR)
 
 # Manipulate include paths
-override CFLAGS := $(CFLAGS) -I$(d)
+CFLAGS := $(CFLAGS) -I$(d)
 
 # Sources
 SRCS_$(d) := buffer.c dict.c errors.c rbtree.c stack.c vector.c

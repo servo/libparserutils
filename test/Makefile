@@ -32,7 +32,7 @@ dirstack_$(sp) := $(d)
 d              := $(DIR)
 
 # Extend toolchain settings
-override CFLAGS := $(CFLAGS) -I$(TOP)/src/ -I$(d)
+CFLAGS := $(CFLAGS) -I$(TOP)/src/ -I$(d)
 
 # Tests
 TESTS_$(d) := aliases cscodec-8859 cscodec-ext8 cscodec-utf8 cscodec-utf16 \
