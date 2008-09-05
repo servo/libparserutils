@@ -296,6 +296,7 @@ void run_test(line_ctx *ctx)
 		assert(srclen == 0);
 		assert(ctx->buf + ctx->bufused == psrc);
 		assert(dest + (ctx->bufused * 4 - destlen) == pdest);
+		assert(ctx->bufused * 4 - destlen == ctx->expused);
 	}
 
 	printf("%d: Read '", ++testnum);
