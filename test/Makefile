@@ -44,7 +44,8 @@ TESTS_$(d) := $(TESTS_$(d)) regression/cscodec-segv regression/filter-segv \
 ITEMS_CLEAN := $(ITEMS_CLEAN) \
 	$(addprefix $(d), $(addsuffix $(EXEEXT), $(TESTS_$(d)))) \
 	$(addprefix $(d), $(addsuffix .gcda, $(TESTS_$(d)))) \
-	$(addprefix $(d), $(addsuffix .gcno, $(TESTS_$(d))))
+	$(addprefix $(d), $(addsuffix .gcno, $(TESTS_$(d)))) \
+	$(addprefix $(d), $(addsuffix .d, $(TESTS_$(d))))
 ITEMS_DISTCLEAN := $(ITEMS_DISTCLEAN) $(d)log
 
 # Targets for top-level makefile to run
@@ -59,6 +60,16 @@ TARGET_TESTS := $(TARGET_TESTS) test_$(d)
 test_$(d): $(d) $(addprefix $(d), $(TESTS_$(d)))
 	@$(PERL) $(TOP)/$<testrunner.pl $(TOP)/$< $(EXEEXT)
 
+DEP_$(d) :=
+
+define dep_test
+DEP_$(d) += $(2)
+$(2): $(1)
+	@$$(RM) $$(RMFLAGS) $(2)
+	@$$(CC) $$(DEBUGCFLAGS) -MM -MT '$(2) $(3)' -MF $(2) $(1)
+
+endef
+
 # Build rules for each test binary -- they all depend on the debug library
 define compile_test
 $(2): $$(TOP)/$$(COMPONENT)-debug.a $(1)
@@ -68,6 +79,13 @@ $(2): $$(TOP)/$$(COMPONENT)-debug.a $(1)
 	@$$(RM) $$(RMFLAGS) $$@.o
 
 endef
+
+$(eval $(foreach TEST,$(addprefix $(d), $(TESTS_$(d))), \
+	$(call dep_test,$(addsuffix .c, $(TEST)),$(addsuffix .d, $(TEST)),$(TEST))))
+
+ifneq ($(findstring clean,$(MAKECMDGOALS)),clean)
+-include $(sort $(DEP_$(d)))
+endif
 
 $(eval $(foreach TEST,$(addprefix $(d), $(TESTS_$(d))), \
 	$(call compile_test,$(addsuffix .c, $(TEST)),$(TEST))))
