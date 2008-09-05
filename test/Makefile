@@ -35,8 +35,8 @@ d              := $(DIR)
 override CFLAGS := $(CFLAGS) -I$(TOP)/src/ -I$(d)
 
 # Tests
-TESTS_$(d) := aliases cscodec-ext8 cscodec-utf8 cscodec-utf16 charset \
-	dict filter inputstream parserutils rbtree
+TESTS_$(d) := aliases cscodec-8859 cscodec-ext8 cscodec-utf8 cscodec-utf16 \
+	charset dict filter inputstream parserutils rbtree
 TESTS_$(d) := $(TESTS_$(d)) regression/cscodec-segv regression/filter-segv \
 	regression/stream-nomem
 
