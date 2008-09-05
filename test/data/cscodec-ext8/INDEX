@@ -2,4 +2,4 @@
 #
 # Test			Description
 
-simple.dat		Simple tests, designed to validate testdriver
+cp1252.dat		Windows-1252 test
