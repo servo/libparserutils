@@ -525,11 +525,12 @@ parserutils_error charset_ext8_from_ucs4(charset_ext8_codec *c,
 			else
 				out = '?';
 		} else {
-			out = c->table[i];
+			out = 0x80 + i;
 		}	
 	}
 
-	*(*s++) = out;
+	*(*s) = out;
+	(*s)++;
 	(*len)--;
 
 	return PARSERUTILS_OK;

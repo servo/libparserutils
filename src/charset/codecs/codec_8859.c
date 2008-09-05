@@ -531,11 +531,12 @@ parserutils_error charset_8859_from_ucs4(charset_8859_codec *c,
 			else
 				out = '?';
 		} else {
-			out = c->table[i];
+			out = 0xA0 + i;
 		}	
 	}
 
-	*(*s++) = out;
+	*(*s) = out;
+	(*s)++;
 	(*len)--;
 
 	return PARSERUTILS_OK;
