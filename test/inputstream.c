@@ -9,6 +9,11 @@
 
 #include "testutils.h"
 
+#ifdef __riscos
+const char * const __dynamic_da_name = "InputStream";
+int __dynamic_da_max_size = 128*1024*1024;
+#endif
+
 static void *myrealloc(void *ptr, size_t len, void *pw)
 {
 	UNUSED(pw);
@@ -32,10 +37,10 @@ int main(int argc, char **argv)
 	}
 
 	/* Initialise library */
-	assert(parserutils_initialise(argv[1], myrealloc, NULL) == 
+	assert(parserutils_initialise(argv[1], myrealloc, NULL) ==
 			PARSERUTILS_OK);
 
-	stream = parserutils_inputstream_create("UTF-8", 1, NULL, 
+	stream = parserutils_inputstream_create("UTF-8", 1, NULL,
 			myrealloc, NULL);
 	assert(stream != NULL);
 
@@ -78,7 +83,7 @@ int main(int argc, char **argv)
 			(const uint8_t *) "hello!!!",
 			SLEN("hello!!!")) == PARSERUTILS_OK);
 
-	assert(parserutils_inputstream_append(stream, NULL, 0) == 
+	assert(parserutils_inputstream_append(stream, NULL, 0) ==
 			PARSERUTILS_OK);
 
 	while ((c = parserutils_inputstream_peek(stream, 0, &clen)) !=
