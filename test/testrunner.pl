@@ -111,7 +111,7 @@ while (my $line = <TINDEX>) {
 				print "\n\nFailure detected: " .
 						"consult log file\n\n\n";
 
-#				exit(1);
+				exit(1);
 			}
                 }
 
@@ -153,7 +153,7 @@ while (my $line = <TINDEX>) {
 			print "\n\nFailure detected: " . 
 					"consult log file\n\n\n";
 
-#			exit(1);
+			exit(1);
 		}
 	}
 
