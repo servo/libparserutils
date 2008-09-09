@@ -63,14 +63,18 @@ int main(int argc, char **argv)
 	if (ctx.buflen == 0)
 		return 1;
 
-	ctx.buf = malloc(2 * ctx.buflen);
+	ctx.buf = malloc(ctx.buflen);
 	if (ctx.buf == NULL) {
-		printf("Failed allocating %u bytes\n",
-				(unsigned int) ctx.buflen);
+		printf("Failed allocating %zu bytes\n", ctx.buflen);
 		return 1;
 	}
 
-	ctx.exp = ctx.buf + ctx.buflen;
+	ctx.exp = malloc(ctx.buflen);
+	if (ctx.exp == NULL) {
+		printf("Failed allocating %zu bytes\n", ctx.buflen);
+		free(ctx.buf);
+		return 1;
+	}
 	ctx.explen = ctx.buflen;
 
 	ctx.buf[0] = '\0';
@@ -200,10 +204,14 @@ bool handle_line(const char *data, size_t datalen, void *pw)
 					&& isxdigit(data[6]));
 				/* UTF-16 code is always host endian (different
 				   than UCS-32 !).  */
-				ctx->buf[ctx->bufused++]
-					= (hex2digit(data[5]) << 4) | hex2digit(data[6]);
-				ctx->buf[ctx->bufused++]
-					= (hex2digit(data[3]) << 4) | hex2digit(data[4]);
+				const uint16_t nCodePoint = 
+						(hex2digit(data[3]) << 12) | 
+						(hex2digit(data[4]) <<  8) | 
+						(hex2digit(data[5]) <<  4) | 
+						hex2digit(data[6]);
+				*((uint16_t *) (void *) (ctx->buf + ctx->bufused)) = 
+						nCodePoint;
+				ctx->bufused += 2;
 				data += sizeof ("&#xNNNN")-1;
 				datalen -= sizeof ("&#xNNNN")-1;
 			}
@@ -234,10 +242,9 @@ bool handle_line(const char *data, size_t datalen, void *pw)
 					| (hex2digit(data[8]) << 8)
 					| (hex2digit(data[9]) << 4)
 					| hex2digit(data[10]));
-				ctx->exp[ctx->expused++] = (nCodePoint >>  0) & 0xFF;
-				ctx->exp[ctx->expused++] = (nCodePoint >>  8) & 0xFF;
-				ctx->exp[ctx->expused++] = (nCodePoint >> 16) & 0xFF;
-				ctx->exp[ctx->expused++] = (nCodePoint >> 24) & 0xFF;
+				*((uint32_t *) (void *) (ctx->exp + ctx->expused)) = 
+						nCodePoint;
+				ctx->expused += 4;
 				data += sizeof ("&#xXXXXYYYY")-1;
 				datalen -= sizeof ("&#xXXXXYYYY")-1;
 			}
