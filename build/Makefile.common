@@ -99,13 +99,12 @@ install: release
 	@$(MKDIR) $(MKDIRFLAGS) -p $(DESTDIR)$(PREFIX)/include/parserutils/input
 	@$(MKDIR) $(MKDIRFLAGS) -p $(DESTDIR)$(PREFIX)/include/parserutils/utils
 	@$(SED) -e 's#PREFIX#$(PREFIX)#' $(COMPONENT).pc.in >$(COMPONENT).pc
-	$(INSTALL) --mode=644 -t $(DESTDIR)$(PREFIX)/lib $(COMPONENT).a
-	$(INSTALL) --mode=644 -t $(DESTDIR)$(PREFIX)/lib/pkgconfig $(COMPONENT).pc
-	$(INSTALL) --mode=644 -t $(DESTDIR)$(PREFIX)/include/parserutils $(filter %.h, $(wildcard include/parserutils/*))
-	$(INSTALL) --mode=644 -t $(DESTDIR)$(PREFIX)/include/parserutils/charset $(filter %.h, $(wildcard include/parserutils/charset/*))
-	$(INSTALL) --mode=644 -t $(DESTDIR)$(PREFIX)/include/parserutils/input $(filter %.h, $(wildcard include/parserutils/input/*))
-	$(INSTALL) --mode=644 -t $(DESTDIR)$(PREFIX)/include/parserutils/utils $(filter %.h, $(wildcard include/parserutils/utils/*))
-
+	$(INSTALL) -m 644 $(COMPONENT).a $(PREFIX)/lib
+	$(INSTALL) -m 644 $(COMPONENT).pc $(PREFIX)/lib/pkgconfig
+	$(INSTALL) -m 644 $(filter %.h, $(wildcard include/parserutils/*)) $(PREFIX)/include/parserutils
+	$(INSTALL) -m 644 $(filter %.h, $(wildcard include/parserutils/charset/*)) $(PREFIX)/include/parserutils/charset
+	$(INSTALL) -m 644 $(filter %.h, $(wildcard include/parserutils/input/*)) $(PREFIX)/include/parserutils/input 
+	$(INSTALL) -m 644 $(filter %.h, $(wildcard include/parserutils/utils/*)) $(PREFIX)/include/parserutils/utils
 
 uninstall:
 	$(RM) $(RMFLAGS) $(DESTDIR)$(PREFIX)/lib/$(COMPONENT).a
