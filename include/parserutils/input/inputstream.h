@@ -93,7 +93,9 @@ static inline uintptr_t parserutils_inputstream_peek(
 	fprintf(stdout, "Peek: len: %zu cur: %u off: %zu\n",
 			stream->utf8->length, stream->cursor, offset);
 #endif
+#ifdef RANDOMISE_INPUTSTREAM
 	parserutils_buffer_randomise(stream->utf8);
+#endif
 #endif
 
 #define IS_ASCII(x) (((x) & 0x80) == 0)
