@@ -10,6 +10,7 @@
 #include "charset/aliases.h"
 #include "charset/codecs/codec_impl.h"
 
+extern parserutils_charset_handler charset_ascii_codec_handler;
 extern parserutils_charset_handler charset_8859_codec_handler;
 extern parserutils_charset_handler charset_ext8_codec_handler;
 extern parserutils_charset_handler charset_utf8_codec_handler;
@@ -20,6 +21,7 @@ static parserutils_charset_handler *handler_table[] = {
 	&charset_utf16_codec_handler,
 	&charset_8859_codec_handler,
 	&charset_ext8_codec_handler,
+	&charset_ascii_codec_handler,
 	NULL,
 };
 
