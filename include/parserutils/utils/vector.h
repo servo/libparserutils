@@ -27,6 +27,8 @@ parserutils_error parserutils_vector_remove_last(parserutils_vector *vector);
 
 const void *parserutils_vector_iterate(const parserutils_vector *vector, 
 		int32_t *ctx);
+const void *parserutils_vector_peek(const parserutils_vector *vector,
+		int32_t ctx);
 
 #endif
 

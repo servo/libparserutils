@@ -179,6 +179,26 @@ const void *parserutils_vector_iterate(const parserutils_vector *vector,
 	return item;
 }
 
+/**
+ * Peek at an item in a vector
+ *
+ * \param vector  The vector to iterate over
+ * \param ctx     Integer for the iterator to use as context.
+ * \return Pointer to item, or NULL if no more
+ */
+const void *parserutils_vector_peek(const parserutils_vector *vector, 
+		int32_t ctx)
+{
+	if (vector == NULL || vector->current_item < 0)
+		return NULL;
+
+	if (ctx > vector->current_item)
+		return NULL;
+
+	return (uint8_t *) vector->items + (ctx * vector->item_size);
+}
+
+
 #ifndef NDEBUG
 #include <stdio.h>
 
