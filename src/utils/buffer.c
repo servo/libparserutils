@@ -14,45 +14,57 @@
 /**
  * Create a memory buffer
  *
- * \param alloc  Memory (de)allocation function
- * \param pw     Pointer to client-specific private data
- * \return Pointer to memory buffer, or NULL on memory exhaustion
+ * \param alloc   Memory (de)allocation function
+ * \param pw      Pointer to client-specific private data
+ * \param buffer  Pointer to location to receive memory buffer
+ * \return PARSERUTILS_OK on success,
+ *         PARSERUTILS_BADPARM on bad parameters,
+ *         PARSERUTILS_NOMEM on memory exhausion
  */
-parserutils_buffer *parserutils_buffer_create(parserutils_alloc alloc, void *pw)
+parserutils_error parserutils_buffer_create(parserutils_alloc alloc, void *pw,
+		parserutils_buffer **buffer)
 {
-	parserutils_buffer *buffer = 
-			alloc(NULL, sizeof(parserutils_buffer), pw);
+	parserutils_buffer *b;
 
-	if (buffer == NULL)
-		return NULL;
+	if (alloc == NULL || buffer == NULL)
+		return PARSERUTILS_BADPARM;
 
-	buffer->data = alloc(NULL, DEFAULT_SIZE, pw);
-	if (buffer->data == NULL) {
-		alloc(buffer, 0, pw);
-		return NULL;
+	b = alloc(NULL, sizeof(parserutils_buffer), pw);
+	if (b == NULL)
+		return PARSERUTILS_NOMEM;
+
+	b->data = alloc(NULL, DEFAULT_SIZE, pw);
+	if (b->data == NULL) {
+		alloc(b, 0, pw);
+		return PARSERUTILS_NOMEM;
 	}
 
-	buffer->length = 0;
-	buffer->allocated = DEFAULT_SIZE;
+	b->length = 0;
+	b->allocated = DEFAULT_SIZE;
 
-	buffer->alloc = alloc;
-	buffer->pw = pw;
+	b->alloc = alloc;
+	b->pw = pw;
 
-	return buffer;
+	*buffer = b;
+
+	return PARSERUTILS_OK;
 }
 
 /**
  * Destroy a memory buffer
  *
  * \param buffer  The buffer to destroy
+ * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
-void parserutils_buffer_destroy(parserutils_buffer *buffer)
+parserutils_error parserutils_buffer_destroy(parserutils_buffer *buffer)
 {
 	if (buffer == NULL)
-		return;
+		return PARSERUTILS_BADPARM;
 
 	buffer->alloc(buffer->data, 0, buffer->pw);
 	buffer->alloc(buffer, 0, buffer->pw);
+
+	return PARSERUTILS_OK;
 }
 
 /**

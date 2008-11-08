@@ -54,65 +54,74 @@ static parserutils_error filter_set_encoding(parserutils_filter *input,
  * \param int_enc  Desired encoding of document
  * \param alloc    Function used to (de)allocate data
  * \param pw       Pointer to client-specific private data (may be NULL)
- * \return Pointer to filter instance, or NULL on failure
+ * \param filter   Pointer to location to receive filter instance
+ * \return PARSERUTILS_OK on success,
+ *         PARSERUTILS_BADPARM on bad parameters,
+ *         PARSERUTILS_NOMEM on memory exhausion,
+ *         PARSERUTILS_BADENCODING if the encoding is unsupported
  */
-parserutils_filter *parserutils_filter_create(const char *int_enc,
-		parserutils_alloc alloc, void *pw)
+parserutils_error parserutils_filter_create(const char *int_enc,
+		parserutils_alloc alloc, void *pw, parserutils_filter **filter)
 {
-	parserutils_filter *filter;
+	parserutils_filter *f;
+	parserutils_error error;
 
-	if (int_enc == NULL || alloc == NULL)
-		return NULL;
+	if (int_enc == NULL || alloc == NULL || filter == NULL)
+		return PARSERUTILS_BADPARM;
 
-	filter = alloc(NULL, sizeof(*filter), pw);
-	if (!filter)
-		return NULL;
+	f = alloc(NULL, sizeof(parserutils_filter), pw);
+	if (f == NULL)
+		return PARSERUTILS_NOMEM;
 
 #ifdef WITH_ICONV_FILTER
-	filter->cd = (iconv_t) -1;
-	filter->int_enc = parserutils_charset_mibenum_from_name(
+	f->cd = (iconv_t) -1;
+	f->int_enc = parserutils_charset_mibenum_from_name(
 			int_enc, strlen(int_enc));
-	if (filter->int_enc == 0) {
-		alloc(filter, 0, pw);
-		return NULL;
+	if (f->int_enc == 0) {
+		alloc(f, 0, pw);
+		return PARSERUTILS_BADENCODING;
 	}
 #else
-	filter->leftover = false;
-	filter->pivot_left = NULL;
-	filter->pivot_len = 0;
+	f->leftover = false;
+	f->pivot_left = NULL;
+	f->pivot_len = 0;
 #endif
 
-	filter->alloc = alloc;
-	filter->pw = pw;
+	f->alloc = alloc;
+	f->pw = pw;
 
-	if (filter_set_defaults(filter) != PARSERUTILS_OK) {
-		filter->alloc(filter, 0, pw);
-		return NULL;
+	error = filter_set_defaults(f);
+	if (error != PARSERUTILS_OK) {
+		f->alloc(f, 0, pw);
+		return error;
 	}
 
 #ifndef WITH_ICONV_FILTER
-	filter->write_codec = 
-			parserutils_charset_codec_create(int_enc, alloc, pw);
-	if (filter->write_codec == NULL) {
-		if (filter->read_codec != NULL)
-			parserutils_charset_codec_destroy(filter->read_codec);
-		filter->alloc(filter, 0, pw);
-		return NULL;
+	error = parserutils_charset_codec_create(int_enc, alloc, pw, 
+			&f->write_codec);
+	if (error != PARSERUTILS_OK) {
+		if (f->read_codec != NULL)
+			parserutils_charset_codec_destroy(f->read_codec);
+		f->alloc(f, 0, pw);
+		return error;
 	}
 #endif
 
-	return filter;
+	*filter = f;
+
+	return PARSERUTILS_OK;
 }
 
 /**
  * Destroy an input filter
  *
  * \param input  Pointer to filter instance
+ * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
-void parserutils_filter_destroy(parserutils_filter *input)
+parserutils_error parserutils_filter_destroy(parserutils_filter *input)
 {
 	if (input == NULL)
-		return;
+		return PARSERUTILS_BADPARM;
 
 #ifdef WITH_ICONV_FILTER
 	if (input->cd != (iconv_t) -1)
@@ -127,7 +136,7 @@ void parserutils_filter_destroy(parserutils_filter *input)
 
 	input->alloc(input, 0, input->pw);
 
-	return;
+	return PARSERUTILS_OK;
 }
 
 /**
@@ -354,6 +363,7 @@ parserutils_error filter_set_defaults(parserutils_filter *input)
 parserutils_error filter_set_encoding(parserutils_filter *input,
 		const char *enc)
 {
+	parserutils_error error;
 	const char *old_enc;
 	uint16_t mibenum;
 
@@ -384,10 +394,10 @@ parserutils_error filter_set_encoding(parserutils_filter *input,
 	if (input->read_codec != NULL)
 		parserutils_charset_codec_destroy(input->read_codec);
 
-	input->read_codec = parserutils_charset_codec_create(enc, input->alloc,
-			input->pw);
-	if (input->read_codec == NULL)
-		return PARSERUTILS_NOMEM;
+	error = parserutils_charset_codec_create(enc, input->alloc,
+			input->pw, &input->read_codec);
+	if (error != PARSERUTILS_OK)
+		return error;
 #endif
 
 	input->settings.encoding = mibenum;

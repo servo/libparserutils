@@ -38,6 +38,9 @@ const char *parserutils_error_to_string(parserutils_error error)
 	case PARSERUTILS_NEEDDATA:
 		result = "Insufficient data";
 		break;
+	case PARSERUTILS_BADENCODING:
+		result = "Unsupported encoding";
+		break;
 	}
 
 	return result;
@@ -64,6 +67,8 @@ parserutils_error parserutils_error_from_string(const char *str, size_t len)
 		return PARSERUTILS_FILENOTFOUND;
 	} else if (strncmp(str, "PARSERUTILS_NEEDDATA", len) == 0) {
 		return PARSERUTILS_NEEDDATA;
+	} else if (strncmp(str, "PARSERUTILS_BADENCODING", len) == 0) {
+		return PARSERUTILS_BADENCODING;
 	}
 
 	return PARSERUTILS_OK;

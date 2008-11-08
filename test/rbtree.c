@@ -25,8 +25,8 @@ int main(int argc, char **argv)
 	UNUSED(argc);
 	UNUSED(argv);
 
-	tree = parserutils_rbtree_create(mycmp, myrealloc, NULL);
-	assert(tree != NULL);
+	assert(parserutils_rbtree_create(mycmp, myrealloc, NULL, &tree) ==
+		PARSERUTILS_OK);
 
 #define N 40000
 #define G 307

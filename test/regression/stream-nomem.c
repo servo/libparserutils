@@ -52,9 +52,8 @@ int main(int argc, char **argv)
 	assert(parserutils_initialise(argv[1], myrealloc, NULL) == 
 			PARSERUTILS_OK);
 
-	stream = parserutils_inputstream_create("UTF-8", 0, 
-			NULL, myrealloc, NULL);
-	assert(stream != NULL);
+	assert(parserutils_inputstream_create("UTF-8", 0, 
+			NULL, myrealloc, NULL, &stream) == PARSERUTILS_OK);
 
 	assert(parserutils_inputstream_append(stream, 
 			input_buffer, BUFFER_SIZE) == PARSERUTILS_OK);

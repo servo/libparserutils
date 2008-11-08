@@ -31,23 +31,29 @@ static parserutils_charset_handler *handler_table[] = {
  * \param charset  Target charset
  * \param alloc    Memory (de)allocation function
  * \param pw       Pointer to client-specific private data (may be NULL)
- * \return Pointer to codec instance, or NULL on failure
+ * \param codec    Pointer to location to receive codec instance
+ * \return PARSERUTILS_OK on success,
+ *         PARSERUTILS_BADPARM on bad parameters,
+ *         PARSERUTILS_NOMEM on memory exhaustion,
+ *         PARSERUTILS_BADENCODING on unsupported charset
  */
-parserutils_charset_codec *parserutils_charset_codec_create(const char *charset,
-		parserutils_alloc alloc, void *pw)
+parserutils_error parserutils_charset_codec_create(const char *charset,
+		parserutils_alloc alloc, void *pw,
+		parserutils_charset_codec **codec)
 {
-	parserutils_charset_codec *codec;
+	parserutils_charset_codec *c;
 	parserutils_charset_handler **handler;
 	const parserutils_charset_aliases_canon * canon;
+	parserutils_error error;
 
-	if (charset == NULL || alloc == NULL)
-		return NULL;
+	if (charset == NULL || alloc == NULL || codec == NULL)
+		return PARSERUTILS_BADPARM;
 
 	/* Canonicalise parserutils_charset name. */
 	canon = parserutils_charset_alias_canonicalise(charset, 
 			strlen(charset));
 	if (canon == NULL)
-		return NULL;
+		return PARSERUTILS_BADENCODING;
 
 	/* Search for handler class */
 	for (handler = handler_table; *handler != NULL; handler++) {
@@ -57,37 +63,43 @@ parserutils_charset_codec *parserutils_charset_codec_create(const char *charset,
 
 	/* None found */
 	if ((*handler) == NULL)
-		return NULL;
+		return PARSERUTILS_BADENCODING;
 
 	/* Instantiate class */
-	codec = (*handler)->create(canon->name, alloc, pw);
-	if (codec == NULL)
-		return NULL;
+	error = (*handler)->create(canon->name, alloc, pw, &c);
+	if (error != PARSERUTILS_OK)
+		return error;
 
 	/* and initialise it */
-	codec->mibenum = canon->mib_enum;
+	c->mibenum = canon->mib_enum;
 
-	codec->errormode = PARSERUTILS_CHARSET_CODEC_ERROR_LOOSE;
+	c->errormode = PARSERUTILS_CHARSET_CODEC_ERROR_LOOSE;
 
-	codec->alloc = alloc;
-	codec->alloc_pw = pw;
+	c->alloc = alloc;
+	c->alloc_pw = pw;
 
-	return codec;
+	*codec = c;
+
+	return PARSERUTILS_OK;
 }
 
 /**
  * Destroy a charset codec
  *
  * \param codec  The codec to destroy
+ * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
-void parserutils_charset_codec_destroy(parserutils_charset_codec *codec)
+parserutils_error parserutils_charset_codec_destroy(
+		parserutils_charset_codec *codec)
 {
 	if (codec == NULL)
-		return;
+		return PARSERUTILS_BADPARM;
 
 	codec->handler.destroy(codec);
 
 	codec->alloc(codec, 0, codec->alloc_pw);
+
+	return PARSERUTILS_OK;
 }
 
 /**

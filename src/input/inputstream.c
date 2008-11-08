@@ -51,104 +51,115 @@ static inline parserutils_error parserutils_inputstream_strip_bom(
  * \param csdetect  Charset detection function, or NULL
  * \param alloc     Memory (de)allocation function
  * \param pw        Pointer to client-specific private data (may be NULL)
- * \return Pointer to stream instance, or NULL on failure
+ * \param stream    Pointer to location to receive stream instance
+ * \return PARSERUTILS_OK on success,
+ *         PARSERUTILS_BADPARM on bad parameters,
+ *         PARSERUTILS_NOMEM on memory exhaustion,
+ *         PARSERUTILS_BADENCODING on unsupported encoding
  *
  * The value 0 is defined as being the lowest priority encoding source 
  * (i.e. the default fallback encoding). Beyond this, no further 
  * interpretation is made upon the encoding source.
  */
-parserutils_inputstream *parserutils_inputstream_create(const char *enc,
+parserutils_error parserutils_inputstream_create(const char *enc,
 		uint32_t encsrc, parserutils_charset_detect_func csdetect,
-		parserutils_alloc alloc, void *pw)
+		parserutils_alloc alloc, void *pw,
+		parserutils_inputstream **stream)
 {
-	parserutils_inputstream_private *stream;
+	parserutils_inputstream_private *s;
+	parserutils_error error;
 
-	if (alloc == NULL)
-		return NULL;
+	if (alloc == NULL || stream == NULL)
+		return PARSERUTILS_BADPARM;
 
-	stream = alloc(NULL, sizeof(parserutils_inputstream_private), pw);
-	if (stream == NULL)
-		return NULL;
+	s = alloc(NULL, sizeof(parserutils_inputstream_private), pw);
+	if (s == NULL)
+		return PARSERUTILS_NOMEM;
 
-	stream->raw = parserutils_buffer_create(alloc, pw);
-	if (stream->raw == NULL) {
-		alloc(stream, 0, pw);
-		return NULL;
+	error = parserutils_buffer_create(alloc, pw, &s->raw);
+	if (error != PARSERUTILS_OK) {
+		alloc(s, 0, pw);
+		return error;
 	}
 
-	stream->public.utf8 = parserutils_buffer_create(alloc, pw);
-	if (stream->public.utf8 == NULL) {
-		parserutils_buffer_destroy(stream->raw);
-		alloc(stream, 0, pw);
-		return NULL;
+	error = parserutils_buffer_create(alloc, pw, &s->public.utf8);
+	if (error != PARSERUTILS_OK) {
+		parserutils_buffer_destroy(s->raw);
+		alloc(s, 0, pw);
+		return error;
 	}
 
-	stream->public.cursor = 0;
-	stream->public.had_eof = false;
-	stream->done_first_chunk = false;
+	s->public.cursor = 0;
+	s->public.had_eof = false;
+	s->done_first_chunk = false;
 
-	stream->input = parserutils_filter_create("UTF-8", alloc, pw);
-	if (stream->input == NULL) {
-		parserutils_buffer_destroy(stream->public.utf8);
-		parserutils_buffer_destroy(stream->raw);
-		alloc(stream, 0, pw);
-		return NULL;
+	error = parserutils_filter_create("UTF-8", alloc, pw, &s->input);
+	if (error != PARSERUTILS_OK) {
+		parserutils_buffer_destroy(s->public.utf8);
+		parserutils_buffer_destroy(s->raw);
+		alloc(s, 0, pw);
+		return error;
 	}
 
 	if (enc != NULL) {
-		parserutils_error error;
 		parserutils_filter_optparams params;
 
-		stream->mibenum = 
+		s->mibenum = 
 			parserutils_charset_mibenum_from_name(enc, strlen(enc));
 
-		if (stream->mibenum != 0) {
+		if (s->mibenum != 0) {
 			params.encoding.name = enc;
 
-			error = parserutils_filter_setopt(stream->input,
+			error = parserutils_filter_setopt(s->input,
 					PARSERUTILS_FILTER_SET_ENCODING, 
 					&params);
 			if (error != PARSERUTILS_OK && 
 					error != PARSERUTILS_INVALID) {
-				parserutils_filter_destroy(stream->input);
-				parserutils_buffer_destroy(stream->public.utf8);
-				parserutils_buffer_destroy(stream->raw);
-				alloc(stream, 0, pw);
-				return NULL;
+				parserutils_filter_destroy(s->input);
+				parserutils_buffer_destroy(s->public.utf8);
+				parserutils_buffer_destroy(s->raw);
+				alloc(s, 0, pw);
+				return error;
 			}
 
-			stream->encsrc = encsrc;
+			s->encsrc = encsrc;
 		}
 	} else {
-		stream->mibenum = 0;
-		stream->encsrc = 0;
+		s->mibenum = 0;
+		s->encsrc = 0;
 	}
 
-	stream->csdetect = csdetect;
+	s->csdetect = csdetect;
 
-	stream->alloc = alloc;
-	stream->pw = pw;
+	s->alloc = alloc;
+	s->pw = pw;
 
-	return (parserutils_inputstream *) stream;
+	*stream = (parserutils_inputstream *) s;
+
+	return PARSERUTILS_OK;
 }
 
 /**
  * Destroy an input stream
  *
  * \param stream  Input stream to destroy
+ * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
-void parserutils_inputstream_destroy(parserutils_inputstream *stream)
+parserutils_error parserutils_inputstream_destroy(
+		parserutils_inputstream *stream)
 {
 	parserutils_inputstream_private *s = 
 			(parserutils_inputstream_private *) stream;
 
 	if (stream == NULL)
-		return;
+		return PARSERUTILS_BADPARM;
 
 	parserutils_filter_destroy(s->input);
 	parserutils_buffer_destroy(s->public.utf8);
 	parserutils_buffer_destroy(s->raw);
 	s->alloc(s, 0, s->pw);
+
+	return PARSERUTILS_OK;
 }
 
 /**

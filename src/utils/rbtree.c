@@ -92,26 +92,31 @@ static inline void dump_tree(rbnode *node, parserutils_rbtree_print print,
  * \param cmp    Comparator routine for keys
  * \param alloc  Memory (de)allocation function
  * \param pw     Pointer to client-specific private data
- * \return Pointer to tree instance, or NULL on memory exhaustion
+ * \param tree   Pointer to location to receive tree instance
+ * \return PARSERUTILS_OK on success, 
+ *         PARSERUTILS_BADPARM on bad parameters,
+ *         PARSERUTILS_NOMEM on memory exhaustion
  */
-parserutils_rbtree *parserutils_rbtree_create(parserutils_rbtree_cmp cmp, 
-		parserutils_alloc alloc, void *pw)
+parserutils_error parserutils_rbtree_create(parserutils_rbtree_cmp cmp, 
+		parserutils_alloc alloc, void *pw, parserutils_rbtree **tree)
 {
-	parserutils_rbtree *tree;
+	parserutils_rbtree *t;
 
-	if (cmp == NULL || alloc == NULL)
-		return NULL;
+	if (cmp == NULL || alloc == NULL || tree == NULL)
+		return PARSERUTILS_BADPARM;
 
-	tree = alloc(NULL, sizeof(parserutils_rbtree), pw);
-	if (tree == NULL)
-		return NULL;
+	t = alloc(NULL, sizeof(parserutils_rbtree), pw);
+	if (t == NULL)
+		return PARSERUTILS_NOMEM;
 
-	tree->root = NULL;
-	tree->cmp = cmp;
-	tree->alloc = alloc;
-	tree->pw = pw;
+	t->root = NULL;
+	t->cmp = cmp;
+	t->alloc = alloc;
+	t->pw = pw;
 
-	return tree;
+	*tree = t;
+
+	return PARSERUTILS_OK;
 }
 
 /**
@@ -120,12 +125,13 @@ parserutils_rbtree *parserutils_rbtree_create(parserutils_rbtree_cmp cmp,
  * \param tree        The tree to destroy
  * \param destructor  Routine to be called with key/value pairs to destroy
  * \param pw          Pointer to client-specific private data
+ * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
-void parserutils_rbtree_destroy(parserutils_rbtree *tree,
+parserutils_error parserutils_rbtree_destroy(parserutils_rbtree *tree,
 		parserutils_rbtree_del destructor, void *pw)
 {
 	if (tree == NULL)
-		return;
+		return PARSERUTILS_BADPARM;
 
 	while (tree->root != NULL) {
 #ifndef USE_DELETEMAX
@@ -142,6 +148,8 @@ void parserutils_rbtree_destroy(parserutils_rbtree *tree,
 	}
 
 	tree->alloc(tree, 0, tree->pw);
+
+	return PARSERUTILS_OK;
 }
 
 /**

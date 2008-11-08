@@ -26,8 +26,8 @@ int main(int argc, char **argv)
 	assert(parserutils_initialise(argv[1], myrealloc, NULL) == 
 			PARSERUTILS_OK);
 
-	input = parserutils_filter_create("UTF-8", myrealloc, NULL);
-	assert(input);
+	assert(parserutils_filter_create("UTF-8", myrealloc, NULL, &input) ==
+			PARSERUTILS_OK);
 
 	parserutils_filter_destroy(input);
 

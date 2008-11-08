@@ -40,9 +40,8 @@ int main(int argc, char **argv)
 	assert(parserutils_initialise(argv[1], myrealloc, NULL) ==
 			PARSERUTILS_OK);
 
-	stream = parserutils_inputstream_create("UTF-8", 1, NULL,
-			myrealloc, NULL);
-	assert(stream != NULL);
+	assert(parserutils_inputstream_create("UTF-8", 1, NULL,
+			myrealloc, NULL, &stream) == PARSERUTILS_OK);
 
 	fp = fopen(argv[2], "rb");
 	if (fp == NULL) {

@@ -32,49 +32,57 @@ struct parserutils_stack
  * \param chunk_size  Number of stack slots in a chunk
  * \param alloc       Memory (de)allocation function
  * \param pw          Pointer to client-specific private data
- * \return Pointer to stack instance, or NULL on memory exhaustion
+ * \param stack       Pointer to location to receive stack instance
+ * \return PARSERUTILS_OK on success,
+ *         PARSERUTILS_BADPARM on bad parameters
+ *         PARSERUTILS_NOMEM on memory exhaustion
  */
-parserutils_stack *parserutils_stack_create(size_t item_size, size_t chunk_size,
-		parserutils_alloc alloc, void *pw)
+parserutils_error parserutils_stack_create(size_t item_size, size_t chunk_size,
+		parserutils_alloc alloc, void *pw, parserutils_stack **stack)
 {
-	parserutils_stack *stack;
+	parserutils_stack *s;
 
-	if (item_size == 0 || chunk_size == 0 || alloc == NULL)
-		return NULL;
+	if (item_size == 0 || chunk_size == 0 || alloc == NULL || stack == NULL)
+		return PARSERUTILS_BADPARM;
 
-	stack = alloc(NULL, sizeof(parserutils_stack), pw);
-	if (stack == NULL)
-		return NULL;
+	s = alloc(NULL, sizeof(parserutils_stack), pw);
+	if (s == NULL)
+		return PARSERUTILS_NOMEM;
 
-	stack->items = alloc(NULL, item_size * chunk_size, pw);
-	if (stack->items == NULL) {
-		alloc(stack, 0, pw);
-		return NULL;
+	s->items = alloc(NULL, item_size * chunk_size, pw);
+	if (s->items == NULL) {
+		alloc(s, 0, pw);
+		return PARSERUTILS_NOMEM;
 	}
 
-	stack->item_size = item_size;
-	stack->chunk_size = chunk_size;
-	stack->items_allocated = chunk_size;
-	stack->current_item = -1;
+	s->item_size = item_size;
+	s->chunk_size = chunk_size;
+	s->items_allocated = chunk_size;
+	s->current_item = -1;
 
-	stack->alloc = alloc;
-	stack->pw = pw;
+	s->alloc = alloc;
+	s->pw = pw;
 
-	return stack;
+	*stack = s;
+
+	return PARSERUTILS_OK;
 }
 
 /**
  * Destroy a stack instance
  *
  * \param stack  The stack to destroy
+ * \return PARSERUTILS_OK on success, appropriate error otherwise.
  */
-void parserutils_stack_destroy(parserutils_stack *stack)
+parserutils_error parserutils_stack_destroy(parserutils_stack *stack)
 {
 	if (stack == NULL)
-		return;
+		return PARSERUTILS_BADPARM;
 
 	stack->alloc(stack->items, 0, stack->pw);
 	stack->alloc(stack, 0, stack->pw);
+
+	return PARSERUTILS_OK;
 }
 
 /**

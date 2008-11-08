@@ -16,9 +16,9 @@
 struct parserutils_stack;
 typedef struct parserutils_stack parserutils_stack;
 
-parserutils_stack *parserutils_stack_create(size_t item_size, size_t chunk_size,
-		parserutils_alloc alloc, void *pw);
-void parserutils_stack_destroy(parserutils_stack *stack);
+parserutils_error parserutils_stack_create(size_t item_size, size_t chunk_size,
+		parserutils_alloc alloc, void *pw, parserutils_stack **stack);
+parserutils_error parserutils_stack_destroy(parserutils_stack *stack);
 
 parserutils_error parserutils_stack_push(parserutils_stack *stack, void *item);
 parserutils_error parserutils_stack_pop(parserutils_stack *stack, void *item);

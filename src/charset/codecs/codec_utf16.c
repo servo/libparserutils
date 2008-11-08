@@ -45,9 +45,11 @@ typedef struct charset_utf16_codec {
 } charset_utf16_codec;
 
 static bool charset_utf16_codec_handles_charset(const char *charset);
-static parserutils_charset_codec *charset_utf16_codec_create(
-		const char *charset, parserutils_alloc alloc, void *pw);
-static void charset_utf16_codec_destroy (parserutils_charset_codec *codec);
+static parserutils_error charset_utf16_codec_create(
+		const char *charset, parserutils_alloc alloc, void *pw,
+		parserutils_charset_codec **codec);
+static parserutils_error charset_utf16_codec_destroy(
+		parserutils_charset_codec *codec);
 static parserutils_error charset_utf16_codec_encode(
 		parserutils_charset_codec *codec,
 		const uint8_t **source, size_t *sourcelen,
@@ -85,45 +87,54 @@ bool charset_utf16_codec_handles_charset(const char *charset)
  * \param charset  The charset to read from / write to
  * \param alloc    Memory (de)allocation function
  * \param pw       Pointer to client-specific private data (may be NULL)
- * \return Pointer to codec, or NULL on failure
+ * \param codec    Pointer to location to receive codec
+ * \return PARSERUTILS_OK on success,
+ *         PARSERUTILS_BADPARM on bad parameters,
+ *         PARSERUTILS_NOMEM on memory exhausion
  */
-parserutils_charset_codec *charset_utf16_codec_create(const char *charset,
-		parserutils_alloc alloc, void *pw)
+parserutils_error charset_utf16_codec_create(const char *charset,
+		parserutils_alloc alloc, void *pw,
+		parserutils_charset_codec **codec)
 {
-	charset_utf16_codec *codec;
+	charset_utf16_codec *c;
 
 	UNUSED(charset);
 
-	codec = alloc(NULL, sizeof(charset_utf16_codec), pw);
-	if (codec == NULL)
-		return NULL;
+	c = alloc(NULL, sizeof(charset_utf16_codec), pw);
+	if (c == NULL)
+		return PARSERUTILS_NOMEM;
 
-	codec->inval_buf[0] = '\0';
-	codec->inval_len = 0;
+	c->inval_buf[0] = '\0';
+	c->inval_len = 0;
 
-	codec->read_buf[0] = 0;
-	codec->read_len = 0;
+	c->read_buf[0] = 0;
+	c->read_len = 0;
 
-	codec->write_buf[0] = 0;
-	codec->write_len = 0;
+	c->write_buf[0] = 0;
+	c->write_len = 0;
 
 	/* Finally, populate vtable */
-	codec->base.handler.destroy = charset_utf16_codec_destroy;
-	codec->base.handler.encode = charset_utf16_codec_encode;
-	codec->base.handler.decode = charset_utf16_codec_decode;
-	codec->base.handler.reset = charset_utf16_codec_reset;
+	c->base.handler.destroy = charset_utf16_codec_destroy;
+	c->base.handler.encode = charset_utf16_codec_encode;
+	c->base.handler.decode = charset_utf16_codec_decode;
+	c->base.handler.reset = charset_utf16_codec_reset;
 
-	return (parserutils_charset_codec *) codec;
+	*codec = (parserutils_charset_codec *) c;
+
+	return PARSERUTILS_OK;
 }
 
 /**
  * Destroy a UTF-16 codec
  *
  * \param codec  The codec to destroy
+ * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
-void charset_utf16_codec_destroy (parserutils_charset_codec *codec)
+parserutils_error charset_utf16_codec_destroy (parserutils_charset_codec *codec)
 {
 	UNUSED(codec);
+
+	return PARSERUTILS_OK;
 }
 
 /**

@@ -38,6 +38,7 @@ static void *myrealloc(void *ptr, size_t len, void *pw)
 
 int main(int argc, char **argv)
 {
+	parserutils_charset_codec *codec;
 	line_ctx ctx;
 
 	if (argc != 3) {
@@ -49,10 +50,10 @@ int main(int argc, char **argv)
 			PARSERUTILS_OK);
 
 	assert(parserutils_charset_codec_create("NATS-SEFI-ADD",
-			myrealloc, NULL) == NULL);
+			myrealloc, NULL, &codec) == PARSERUTILS_BADENCODING);
 
-	ctx.codec = parserutils_charset_codec_create("UTF-8", myrealloc, NULL);
-	assert(ctx.codec != NULL);
+	assert(parserutils_charset_codec_create("UTF-8", myrealloc, NULL,
+			&ctx.codec) == PARSERUTILS_OK);
 
 	ctx.buflen = parse_filesize(argv[2]);
 	if (ctx.buflen == 0)

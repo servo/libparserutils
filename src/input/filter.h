@@ -35,10 +35,10 @@ typedef union parserutils_filter_optparams {
 
 
 /* Create an input filter */
-parserutils_filter *parserutils_filter_create(const char *int_enc,
-		parserutils_alloc alloc, void *pw);
+parserutils_error parserutils_filter_create(const char *int_enc,
+		parserutils_alloc alloc, void *pw, parserutils_filter **filter);
 /* Destroy an input filter */
-void parserutils_filter_destroy(parserutils_filter *input);
+parserutils_error parserutils_filter_destroy(parserutils_filter *input);
 
 /* Configure an input filter */
 parserutils_error parserutils_filter_setopt(parserutils_filter *input,

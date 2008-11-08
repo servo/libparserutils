@@ -37,8 +37,8 @@ int main(int argc, char **argv)
 			PARSERUTILS_OK);
 
 	/* Create input filter */
-	input = parserutils_filter_create("UTF-8", myrealloc, NULL);
-	assert(input);
+	assert(parserutils_filter_create("UTF-8", myrealloc, NULL, &input) ==
+			PARSERUTILS_OK);
 
 	/* Convert filter to UTF-8 encoding */
 	params.encoding.name = "UTF-8";

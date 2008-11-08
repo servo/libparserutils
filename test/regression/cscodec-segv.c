@@ -24,8 +24,8 @@ int main(int argc, char **argv)
 	assert(parserutils_charset_initialise(argv[1], myrealloc, NULL) == 
 			PARSERUTILS_OK);
 
-	codec = parserutils_charset_codec_create("UTF-8", myrealloc, NULL);
-	assert(codec != NULL);
+	assert(parserutils_charset_codec_create("UTF-8", myrealloc, NULL,
+			&codec) == PARSERUTILS_OK);
 
 	parserutils_charset_codec_destroy(codec);
 

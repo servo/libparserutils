@@ -25,7 +25,7 @@ struct parserutils_charset_codec {
 	void *alloc_pw;				/**< private word */
 
 	struct {
-		void (*destroy)(parserutils_charset_codec *codec);
+		parserutils_error (*destroy)(parserutils_charset_codec *codec);
 		parserutils_error (*encode)(parserutils_charset_codec *codec,
 				const uint8_t **source, size_t *sourcelen,
 				uint8_t **dest, size_t *destlen);
@@ -41,8 +41,9 @@ struct parserutils_charset_codec {
  */
 typedef struct parserutils_charset_handler {
 	bool (*handles_charset)(const char *charset);
-	parserutils_charset_codec *(*create)(const char *charset,
-			parserutils_alloc alloc, void *pw);
+	parserutils_error (*create)(const char *charset,
+			parserutils_alloc alloc, void *pw, 
+			parserutils_charset_codec **codec);
 } parserutils_charset_handler;
 
 #endif

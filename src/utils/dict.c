@@ -104,10 +104,10 @@ parserutils_error parserutils_dict_insert(parserutils_dict *dict,
 			return PARSERUTILS_OK;
 		}
 	} else {
-		dict->table[index] = parserutils_rbtree_create(dict_cmp, 
-				dict->alloc, dict->pw);
-		if (dict->table[index] == NULL)
-			return PARSERUTILS_NOMEM;
+		error = parserutils_rbtree_create(dict_cmp, 
+				dict->alloc, dict->pw, &dict->table[index]);
+		if (error != PARSERUTILS_OK)
+			return error;
 	}
 
 	entry = dict->alloc(NULL, sizeof(parserutils_dict_entry) + len, 

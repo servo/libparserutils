@@ -32,49 +32,59 @@ struct parserutils_vector
  * \param chunk_size  Number of vector slots in a chunk
  * \param alloc       Memory (de)allocation function
  * \param pw          Pointer to client-specific private data
- * \return Pointer to vector instance, or NULL on memory exhaustion
+ * \param vector      Pointer to location to receive vector instance
+ * \return PARSERUTILS_OK on success,
+ *         PARSERUTILS_BADPARM on bad parameters,
+ *         PARSERUTILS_NOMEM on memory exhaustion
  */
-parserutils_vector *parserutils_vector_create(size_t item_size, 
-		size_t chunk_size, parserutils_alloc alloc, void *pw)
+parserutils_error parserutils_vector_create(size_t item_size, 
+		size_t chunk_size, parserutils_alloc alloc, void *pw,
+		parserutils_vector **vector)
 {
-	parserutils_vector *vector;
+	parserutils_vector *v;
 
-	if (item_size == 0 || chunk_size == 0 || alloc == NULL)
-		return NULL;
+	if (item_size == 0 || chunk_size == 0 || alloc == NULL || 
+			vector == NULL)
+		return PARSERUTILS_BADPARM;
 
-	vector = alloc(NULL, sizeof(parserutils_vector), pw);
-	if (vector == NULL)
-		return NULL;
+	v = alloc(NULL, sizeof(parserutils_vector), pw);
+	if (v == NULL)
+		return PARSERUTILS_NOMEM;
 
-	vector->items = alloc(NULL, item_size * chunk_size, pw);
-	if (vector->items == NULL) {
-		alloc(vector, 0, pw);
-		return NULL;
+	v->items = alloc(NULL, item_size * chunk_size, pw);
+	if (v->items == NULL) {
+		alloc(v, 0, pw);
+		return PARSERUTILS_NOMEM;
 	}
 
-	vector->item_size = item_size;
-	vector->chunk_size = chunk_size;
-	vector->items_allocated = chunk_size;
-	vector->current_item = -1;
+	v->item_size = item_size;
+	v->chunk_size = chunk_size;
+	v->items_allocated = chunk_size;
+	v->current_item = -1;
 
-	vector->alloc = alloc;
-	vector->pw = pw;
+	v->alloc = alloc;
+	v->pw = pw;
 
-	return vector;
+	*vector = v;
+
+	return PARSERUTILS_OK;
 }
 
 /**
  * Destroy a vector instance
  *
  * \param vector  The vector to destroy
+ * \return PARSERUTILS_OK on success, appropriate error otherwise.
  */
-void parserutils_vector_destroy(parserutils_vector *vector)
+parserutils_error parserutils_vector_destroy(parserutils_vector *vector)
 {
 	if (vector == NULL)
-		return;
+		return PARSERUTILS_BADPARM;
 
 	vector->alloc(vector->items, 0, vector->pw);
 	vector->alloc(vector, 0, vector->pw);
+
+	return PARSERUTILS_OK;
 }
 
 /**
