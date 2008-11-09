@@ -24,8 +24,9 @@ typedef struct parserutils_dict_entry parserutils_dict_entry;
 struct parserutils_dict;
 typedef struct parserutils_dict parserutils_dict;
 
-parserutils_dict *parserutils_dict_create(parserutils_alloc alloc, void *pw);
-void parserutils_dict_destroy(parserutils_dict *dict);
+parserutils_error parserutils_dict_create(parserutils_alloc alloc, void *pw,
+		parserutils_dict **dict);
+parserutils_error parserutils_dict_destroy(parserutils_dict *dict);
 
 parserutils_error parserutils_dict_insert(parserutils_dict *dict,
 		const uint8_t *data, size_t len, 

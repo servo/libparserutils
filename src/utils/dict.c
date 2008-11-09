@@ -36,37 +36,46 @@ static void dict_del(void *key, void *value, void *pw);
  * \param pw     Pointer to client-specific private data
  * \return Pointer to dictionary instance, or NULL on memory exhaustion
  */
-parserutils_dict *parserutils_dict_create(parserutils_alloc alloc, void *pw)
+parserutils_error parserutils_dict_create(parserutils_alloc alloc, void *pw,
+		parserutils_dict **dict)
 {
-	parserutils_dict *dict;
+	parserutils_dict *d;
 
-	if (alloc == NULL)
-		return NULL;
+	if (alloc == NULL || dict == NULL)
+		return PARSERUTILS_BADPARM;
 
-	dict = alloc(NULL, sizeof(parserutils_dict), pw);
-	if (dict == NULL)
-		return NULL;
+	d = alloc(NULL, sizeof(parserutils_dict), pw);
+	if (d == NULL)
+		return PARSERUTILS_NOMEM;
 
-	memset(dict->table, 0, TABLE_SIZE * sizeof(parserutils_rbtree *));
+	memset(d->table, 0, TABLE_SIZE * sizeof(parserutils_rbtree *));
 
-	dict->alloc = alloc;
-	dict->pw = pw;
+	d->alloc = alloc;
+	d->pw = pw;
 
-	return dict;
+	*dict = d;
+
+	return PARSERUTILS_OK;
 }
 
 /**
  * Destroy a dictionary
  *
  * \param dict  The dictionary instance to destroy
+ * \return CSS_OK on success, appropriate error otherwise
  */
-void parserutils_dict_destroy(parserutils_dict *dict)
+parserutils_error parserutils_dict_destroy(parserutils_dict *dict)
 {
+	if (dict == NULL)
+		return PARSERUTILS_BADPARM;
+
 	for (int i = 0; i < TABLE_SIZE; i++) {
 		parserutils_rbtree_destroy(dict->table[i], dict_del, dict);
 	}
 
 	dict->alloc(dict, 0, dict->pw);
+
+	return PARSERUTILS_OK;
 }
 
 /**

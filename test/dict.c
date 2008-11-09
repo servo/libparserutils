@@ -29,8 +29,8 @@ int main(int argc, char **argv)
 	}
 	buf[sizeof(buf) - 1] = '\0';
 
-	dict = parserutils_dict_create(myrealloc, NULL);
-	assert(dict != NULL);
+	assert(parserutils_dict_create(myrealloc, NULL, &dict) == 
+			PARSERUTILS_OK);
 
 	for (int i = 0; i < (int) sizeof(buf); i++) {
 		uint8_t *s = buf;
