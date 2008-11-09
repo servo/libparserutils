@@ -18,3 +18,4 @@ inputstream	Inputstream handling			input
 regression/cscodec-segv	Segfault in charset codecs
 regression/filter-segv	Segfault in input filtering
 regression/stream-nomem	Inputstream buffer expansion
+regression/filter-badenc-segv	Segfault on resetting bad encoding in filter

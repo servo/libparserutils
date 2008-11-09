@@ -38,7 +38,7 @@ CFLAGS := $(CFLAGS) -I$(TOP)/src/ -I$(d)
 TESTS_$(d) := aliases cscodec-8859 cscodec-ext8 cscodec-utf8 cscodec-utf16 \
 	charset dict filter inputstream parserutils rbtree
 TESTS_$(d) := $(TESTS_$(d)) regression/cscodec-segv regression/filter-segv \
-	regression/stream-nomem
+	regression/stream-nomem regression/filter-badenc-segv
 
 # Items for top-level makefile to use
 ITEMS_CLEAN := $(ITEMS_CLEAN) \

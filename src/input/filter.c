@@ -100,8 +100,10 @@ parserutils_error parserutils_filter_create(const char *int_enc,
 	error = parserutils_charset_codec_create(int_enc, alloc, pw, 
 			&f->write_codec);
 	if (error != PARSERUTILS_OK) {
-		if (f->read_codec != NULL)
+		if (f->read_codec != NULL) {
 			parserutils_charset_codec_destroy(f->read_codec);
+			f->read_codec = NULL;
+		}
 		f->alloc(f, 0, pw);
 		return error;
 	}
@@ -124,14 +126,20 @@ parserutils_error parserutils_filter_destroy(parserutils_filter *input)
 		return PARSERUTILS_BADPARM;
 
 #ifdef WITH_ICONV_FILTER
-	if (input->cd != (iconv_t) -1)
+	if (input->cd != (iconv_t) -1) {
 		iconv_close(input->cd);
+		input->cd = (iconv_t) -1;
+	}
 #else
-	if (input->read_codec != NULL)
+	if (input->read_codec != NULL) {
 		parserutils_charset_codec_destroy(input->read_codec);
+		input->read_codec = NULL;
+	}
 
-	if (input->write_codec != NULL)
+	if (input->write_codec != NULL) {
 		parserutils_charset_codec_destroy(input->write_codec);
+		input->write_codec = NULL;
+	}
 #endif
 
 	input->alloc(input, 0, input->pw);
@@ -383,16 +391,20 @@ parserutils_error filter_set_encoding(parserutils_filter *input,
 		old_enc = "UTF-8";
 
 #ifdef WITH_ICONV_FILTER
-	if (input->cd != (iconv_t) -1)
+	if (input->cd != (iconv_t) -1) {
 		iconv_close(input->cd);
+		input->cd = (iconv_t) -1;
+	}
 
 	input->cd = iconv_open(
 		parserutils_charset_mibenum_to_name(input->int_enc), enc);
 	if (input->cd == (iconv_t) -1)
 		return PARSERUTILS_NOMEM;
 #else
-	if (input->read_codec != NULL)
+	if (input->read_codec != NULL) {
 		parserutils_charset_codec_destroy(input->read_codec);
+		input->read_codec = NULL;
+	}
 
 	error = parserutils_charset_codec_create(enc, input->alloc,
 			input->pw, &input->read_codec);
@@ -403,4 +415,5 @@ parserutils_error filter_set_encoding(parserutils_filter *input,
 	input->settings.encoding = mibenum;
 
 	return PARSERUTILS_OK;
+
 }
