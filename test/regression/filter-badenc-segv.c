@@ -18,6 +18,13 @@ int main(int argc, char **argv)
 {
 	parserutils_filter *input;
 	parserutils_filter_optparams params;
+	parserutils_error expected;
+
+#ifdef WITH_ICONV_FILTER
+	expected = PARSERUTILS_OK;
+#else
+	expected = PARSERUTILS_BADENCODING;
+#endif
 
 	if (argc != 2) {
 		printf("Usage: %s <filename>\n", argv[0]);
@@ -33,12 +40,12 @@ int main(int argc, char **argv)
 	params.encoding.name = "GBK";
 	assert(parserutils_filter_setopt(input, 
 			PARSERUTILS_FILTER_SET_ENCODING, &params) == 
-			PARSERUTILS_BADENCODING);
+			expected);
 
 	params.encoding.name = "GBK";
 	assert(parserutils_filter_setopt(input, 
 			PARSERUTILS_FILTER_SET_ENCODING, &params) == 
-			PARSERUTILS_BADENCODING);
+			expected);
 
 	parserutils_filter_destroy(input);
 
