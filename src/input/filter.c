@@ -371,7 +371,7 @@ parserutils_error filter_set_defaults(parserutils_filter *input)
 parserutils_error filter_set_encoding(parserutils_filter *input,
 		const char *enc)
 {
-	parserutils_error error;
+	parserutils_error error = PARSERUTILS_OK;
 	const char *old_enc;
 	uint16_t mibenum;
 
@@ -414,6 +414,6 @@ parserutils_error filter_set_encoding(parserutils_filter *input,
 
 	input->settings.encoding = mibenum;
 
-	return PARSERUTILS_OK;
+	return error;
 
 }
