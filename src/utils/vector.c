@@ -218,10 +218,12 @@ extern void parserutils_vector_dump(parserutils_vector *vector,
 void parserutils_vector_dump(parserutils_vector *vector, const char *prefix,
 		void (*printer)(void *item))
 {
+	int32_t i;
+
 	if (vector == NULL || printer == NULL)
 		return;
 
-	for (int32_t i = 0; i <= vector->current_item; i++) {
+	for (i = 0; i <= vector->current_item; i++) {
 		printf("%s %d: ", prefix != NULL ? prefix : "", i);
 		printer((uint8_t *) vector->items + (i * vector->item_size));
 		printf("\n");

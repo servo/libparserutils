@@ -66,10 +66,11 @@ parserutils_error parserutils_dict_create(parserutils_alloc alloc, void *pw,
  */
 parserutils_error parserutils_dict_destroy(parserutils_dict *dict)
 {
+	int i;
 	if (dict == NULL)
 		return PARSERUTILS_BADPARM;
 
-	for (int i = 0; i < TABLE_SIZE; i++) {
+	for (i = 0; i < TABLE_SIZE; i++) {
 		parserutils_rbtree_destroy(dict->table[i], dict_del, dict);
 	}
 
@@ -101,7 +102,9 @@ parserutils_error parserutils_dict_insert(parserutils_dict *dict,
 	index = dict_hash(data, len) % TABLE_SIZE;
 
 	if (dict->table[index] != NULL) {
-		parserutils_dict_entry search = { len, (uint8_t *) data };
+		parserutils_dict_entry search;
+		search.len = len;
+		search.data = (uint8_t *) data;
 
 		error = parserutils_rbtree_find(dict->table[index], 
 				(void *) &search, (void *) &entry);
@@ -263,10 +266,12 @@ static void dict_print(const void *key, const void *value, int depth)
  */
 void parserutils_dict_dump(parserutils_dict *dict)
 {
+	int i;
+
 	if (dict == NULL)
 		return;
 
-	for (int i = 0; i < TABLE_SIZE; i++) {
+	for (i = 0; i < TABLE_SIZE; i++) {
 		printf("%d:\n", i);
 		parserutils_rbtree_dump(dict->table[i], dict_print);
 	}

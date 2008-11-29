@@ -173,10 +173,12 @@ extern void parserutils_stack_dump(parserutils_stack *stack, const char *prefix,
 void parserutils_stack_dump(parserutils_stack *stack, const char *prefix,
 		void (*printer)(void *item))
 {
+	int32_t i;
+
 	if (stack == NULL || printer == NULL)
 		return;
 
-	for (int32_t i = 0; i <= stack->current_item; i++) {
+	for (i = 0; i <= stack->current_item; i++) {
 		printf("%s %d: ", prefix != NULL ? prefix : "", i);
 		printer((uint8_t *) stack->items + (i * stack->item_size));
 		printf("\n");

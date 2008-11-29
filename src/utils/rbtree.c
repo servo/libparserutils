@@ -267,6 +267,7 @@ parserutils_error parserutils_rbtree_delete(parserutils_rbtree *tree,
 rbnode *rbtree_insert_internal(parserutils_rbtree *tree, rbnode *current, 
 		void *key, void *value, void **oldvalue)
 {
+	int cmp;
 	if (current == NULL) {
 		rbnode *node = rbnode_create(tree->alloc, tree->pw, key, value);
 		if (node == NULL)
@@ -281,7 +282,7 @@ rbnode *rbtree_insert_internal(parserutils_rbtree *tree, rbnode *current,
 	if (isRed(current->left) && isRed(current->right))
 		colourFlip(current);
 
-	int cmp = tree->cmp(key, current->key);
+	cmp = tree->cmp(key, current->key);
 
 	if (cmp == 0) {
 		*oldvalue = current->value;
@@ -355,10 +356,11 @@ rbnode *rbtree_delete_internal(parserutils_rbtree *tree, rbnode *current,
 
 		/* Must recalculate here, as current may have changed */
 		if (tree->cmp(key, current->key) == 0) {
+			rbnode *successor;
 			*intkey = current->key;
 			*value = current->value;
 
-			rbnode *successor = findMin(current->right);
+			successor = findMin(current->right);
 
 			current->value = successor->value;
 			current->key = successor->key;

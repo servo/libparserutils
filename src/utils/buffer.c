@@ -168,11 +168,15 @@ parserutils_error parserutils_buffer_grow(parserutils_buffer *buffer)
 
 parserutils_error parserutils_buffer_randomise(parserutils_buffer *buffer)
 {
+#ifndef NDEBUG
+	uint8_t *temp;
+#endif
+
 	if (buffer == NULL)
 		return PARSERUTILS_BADPARM;
 
 #ifndef NDEBUG
-	uint8_t *temp = buffer->alloc(NULL, buffer->allocated, buffer->pw);
+	temp = buffer->alloc(NULL, buffer->allocated, buffer->pw);
 	if (temp == NULL)
 		return PARSERUTILS_NOMEM;
 
