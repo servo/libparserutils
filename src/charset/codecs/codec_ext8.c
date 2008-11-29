@@ -95,11 +95,12 @@ static inline parserutils_error charset_ext8_to_ucs4(charset_ext8_codec *c,
  */
 bool charset_ext8_codec_handles_charset(const char *charset)
 {
+	uint32_t i;
 	uint16_t match = parserutils_charset_mibenum_from_name(charset,
 			strlen(charset));
 	
 	if (known_charsets[0].mib == 0) {
-		for (uint32_t i = 0; i < N_ELEMENTS(known_charsets); i++) {
+		for (i = 0; i < N_ELEMENTS(known_charsets); i++) {
 			known_charsets[i].mib = 
 				parserutils_charset_mibenum_from_name(
 						known_charsets[i].name, 
@@ -107,7 +108,7 @@ bool charset_ext8_codec_handles_charset(const char *charset)
 		}
 	}
 
-	for (uint32_t i = 0; i < N_ELEMENTS(known_charsets); i++) {
+	for (i = 0; i < N_ELEMENTS(known_charsets); i++) {
 		if (known_charsets[i].mib == match)
 			return true;
 	}
@@ -130,12 +131,13 @@ parserutils_error charset_ext8_codec_create(const char *charset,
 		parserutils_alloc alloc, void *pw,
 		parserutils_charset_codec **codec)
 {
+	uint32_t i;
 	charset_ext8_codec *c;
 	uint16_t match = parserutils_charset_mibenum_from_name(
 			charset, strlen(charset));
 	uint32_t *table = NULL;
 
-	for (uint32_t i = 0; i < N_ELEMENTS(known_charsets); i++) {
+	for (i = 0; i < N_ELEMENTS(known_charsets); i++) {
 		if (known_charsets[i].mib == match) {
 			table = known_charsets[i].table;
 			break;
@@ -225,9 +227,10 @@ parserutils_error charset_ext8_codec_encode(parserutils_charset_codec *codec,
 			error = charset_ext8_from_ucs4(c, pwrite[0], 
 					dest, destlen);
 			if (error != PARSERUTILS_OK) {
+				uint32_t len;
 				assert(error == PARSERUTILS_NOMEM);
 
-				for (uint32_t len = 0; 
+				for (len = 0; 
 						len < c->write_len; len++) {
 					c->write_buf[len] = pwrite[len];
 				}
@@ -251,6 +254,7 @@ parserutils_error charset_ext8_codec_encode(parserutils_charset_codec *codec,
 			error = charset_ext8_from_ucs4(c, towrite[0], dest, 
 					destlen);
 			if (error != PARSERUTILS_OK) {
+				uint32_t len;
 				if (error != PARSERUTILS_NOMEM) {
 					return error;
 				}
@@ -263,7 +267,7 @@ parserutils_error charset_ext8_codec_encode(parserutils_charset_codec *codec,
 
 				/* Copy pending chars to save area, for
 				 * processing next call. */
-				for (uint32_t len = 0; len < towritelen; len++)
+				for (len = 0; len < towritelen; len++)
 					c->write_buf[len] = towrite[len];
 
 				/* Claim character we've just buffered,

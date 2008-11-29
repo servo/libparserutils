@@ -35,6 +35,7 @@ extern const uint8_t numContinuations[256];
 do {									\
 	uint32_t c, min;						\
 	uint8_t n;							\
+	uint8_t i;							\
 									\
 	error = PARSERUTILS_OK;						\
 									\
@@ -83,7 +84,7 @@ do {									\
 		break;							\
 	}								\
 									\
-	for (uint8_t i = 1; i < n; i++) {				\
+	for (i = 1; i < n; i++) {				\
 		uint32_t t = s[i];					\
 									\
 		if ((t & 0xC0) != 0x80) {				\
@@ -157,8 +158,9 @@ do {									\
 									\
 	if (l == 1) {							\
 		buf[0] = (uint8_t) ucs4;				\
-	} else {							\
-		for (uint8_t i = l; i > 1; i--) {			\
+	} else {								\
+		uint8_t i;							\
+		for (i = l; i > 1; i--) {			\
 			buf[i - 1] = 0x80 | (ucs4 & 0x3F);		\
 			ucs4 >>= 6;					\
 		}							\

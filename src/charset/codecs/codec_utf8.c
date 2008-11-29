@@ -182,11 +182,12 @@ parserutils_error charset_utf8_codec_encode(parserutils_charset_codec *codec,
 		while (c->write_len > 0) {
 			UTF8_FROM_UCS4(pwrite[0], dest, destlen, error);
 			if (error != PARSERUTILS_OK) {
+				uint32_t len;
 				if (error != PARSERUTILS_NOMEM)
 					abort();
 
 				/* Insufficient output buffer space */
-				for (uint32_t len = 0; 
+				for (len = 0; 
 						len < c->write_len; len++) {
 					c->write_buf[len] = pwrite[len];
 				}
@@ -209,6 +210,7 @@ parserutils_error charset_utf8_codec_encode(parserutils_charset_codec *codec,
 		while (towritelen > 0) {
 			UTF8_FROM_UCS4(towrite[0], dest, destlen, error);
 			if (error != PARSERUTILS_OK) {
+				uint32_t len;
 				if (error != PARSERUTILS_NOMEM)
 					abort();
 
@@ -220,7 +222,7 @@ parserutils_error charset_utf8_codec_encode(parserutils_charset_codec *codec,
 
 				/* Copy pending chars to save area, for
 				 * processing next call. */
-				for (uint32_t len = 0; len < towritelen; len++)
+				for (len = 0; len < towritelen; len++)
 					c->write_buf[len] = towrite[len];
 
 				/* Claim character we've just buffered,

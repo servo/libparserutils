@@ -270,10 +270,10 @@ bool parserutils_charset_mibenum_is_unicode(uint16_t mibenum)
  */
 int aliascmp(const char *s1, const char *s2, size_t s2_len)
 {
+	size_t s2_pos = 0;
+
 	if (s1 == NULL || s2_len == 0)
 		return 1;
-
-	size_t s2_pos = 0;
 
 	while (true) {
 		while (IS_PUNCT_OR_SPACE(*s1))
