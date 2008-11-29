@@ -242,9 +242,9 @@ parserutils_error parserutils_filter_process_chunk(parserutils_filter *input,
 
 	return PARSERUTILS_OK;
 #else
-	parserutils_error read_error, write_error;
-
 	if (input->leftover) {
+		parserutils_error write_error;
+
 		/* Some data left to be written from last call */
 
 		/* Attempt to flush the remaining data. */
@@ -265,6 +265,7 @@ parserutils_error parserutils_filter_process_chunk(parserutils_filter *input,
 	}
 
 	while (*len > 0) {
+		parserutils_error read_error, write_error;
 		size_t pivot_len = sizeof(input->pivot_buf);
 		uint8_t *pivot = (uint8_t *) input->pivot_buf;
 
@@ -308,14 +309,14 @@ parserutils_error parserutils_filter_process_chunk(parserutils_filter *input,
  */
 parserutils_error parserutils_filter_reset(parserutils_filter *input)
 {
+	parserutils_error error = PARSERUTILS_OK;
+
 	if (input == NULL)
 		return PARSERUTILS_BADPARM;
 
 #ifdef WITH_ICONV_FILTER
 	iconv(input->cd, NULL, 0, NULL, 0);
 #else
-	parserutils_error error;
-
 	/* Clear pivot buffer leftovers */
 	input->pivot_left = NULL;
 	input->pivot_len = 0;
@@ -332,7 +333,7 @@ parserutils_error parserutils_filter_reset(parserutils_filter *input)
 		return error;
 #endif
 
-	return PARSERUTILS_OK;
+	return error;
 }
 
 /**
