@@ -187,8 +187,7 @@ parserutils_error charset_utf8_codec_encode(parserutils_charset_codec *codec,
 					abort();
 
 				/* Insufficient output buffer space */
-				for (len = 0; 
-						len < c->write_len; len++) {
+				for (len = 0; len < c->write_len; len++) {
 					c->write_buf[len] = pwrite[len];
 				}
 

@@ -84,7 +84,7 @@ do {									\
 		break;							\
 	}								\
 									\
-	for (i = 1; i < n; i++) {				\
+	for (i = 1; i < n; i++) {					\
 		uint32_t t = s[i];					\
 									\
 		if ((t & 0xC0) != 0x80) {				\
@@ -158,9 +158,9 @@ do {									\
 									\
 	if (l == 1) {							\
 		buf[0] = (uint8_t) ucs4;				\
-	} else {								\
-		uint8_t i;							\
-		for (i = l; i > 1; i--) {			\
+	} else {							\
+		uint8_t i;						\
+		for (i = l; i > 1; i--) {				\
 			buf[i - 1] = 0x80 | (ucs4 & 0x3F);		\
 			ucs4 >>= 6;					\
 		}							\

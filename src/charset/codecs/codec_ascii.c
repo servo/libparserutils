@@ -190,8 +190,7 @@ parserutils_error charset_ascii_codec_encode(parserutils_charset_codec *codec,
 				uint32_t len;
 				assert(error == PARSERUTILS_NOMEM);
 
-				for (len = 0; 
-						len < c->write_len; len++) {
+				for (len = 0; len < c->write_len; len++) {
 					c->write_buf[len] = pwrite[len];
 				}
 
