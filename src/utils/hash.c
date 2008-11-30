@@ -128,30 +128,33 @@ parserutils_error parserutils_hash_insert(parserutils_hash *hash,
 		const uint8_t *data, size_t len,
 		const parserutils_hash_entry **inserted)
 {
-	uint32_t index;
+	uint32_t index, mask;
 	slot_table *slots;
+	const parserutils_hash_entry **entries;
+	const parserutils_hash_entry *entry;
 	const void *idata, *ientry;
-	parserutils_hash_entry entry;
+	parserutils_hash_entry new_entry;
 	parserutils_error error;
 
 	if (hash == NULL || data == NULL || inserted == NULL)
 		return PARSERUTILS_BADPARM;
 
 	slots = hash->slots;
+	entries = slots->slots;
 
 	/* Find index */
-	index = _hash(data, len) % slots->n_slots;
+	mask = slots->n_slots - 1;
+	index = _hash(data, len) & mask;
 
 	/* Use linear probing to resolve collisions */
-	while (slots->slots[index] != NULL) {
+	while ((entry = entries[index]) != NULL) {
 		/* If this data is already in the hash, return it */
-		if (_cmp(data, len, slots->slots[index]->data, 
-				slots->slots[index]->len) == 0) {
-			(*inserted) = slots->slots[index];
+		if (_cmp(data, len, entry->data, entry->len) == 0) {
+			(*inserted) = entry;
 			return PARSERUTILS_OK;
 		}
 
-		index = (index + 1) % slots->n_slots;
+		index = (index + 1) & mask;
 	}
 
 	/* The data isn't in the hash. Index identifies the slot to use */
@@ -159,18 +162,18 @@ parserutils_error parserutils_hash_insert(parserutils_hash *hash,
 	if (error != PARSERUTILS_OK)
 		return error;
 
-	entry.len = len;
-	entry.data = idata;
+	new_entry.len = len;
+	new_entry.data = idata;
 
 	error = parserutils_chunkarray_insert(hash->entries, 
-			&entry, sizeof(parserutils_hash_entry), &ientry);
+			&new_entry, sizeof(parserutils_hash_entry), &ientry);
 	if (error != PARSERUTILS_OK) {
 		/* We effectively leak the inserted data, as chunkarray 
 		 * doesn't support deletion. */
 		return error;
 	}
 
-	(*inserted) = slots->slots[index] = ientry;
+	(*inserted) = entries[index] = ientry;
 
 	/* If the table is 75% full, then increase its size */
 	if (++slots->n_used >= (slots->n_slots >> 1) + (slots->n_slots >> 2))
@@ -197,7 +200,7 @@ uint32_t _hash(const uint8_t *data, size_t len)
 
 #define read16(d) ((((uint32_t)((d)[1])) << 8) | ((uint32_t)((d)[0])))
 
-	for (len = len / 4; len > 0; len--) {
+	for (len = len >> 2; len > 0; len--) {
 		hash += read16(data);
 		tmp   = (read16(data + 2) << 11) ^ hash;
 		hash  = (hash << 16) ^ tmp;
@@ -293,11 +296,12 @@ void grow_slots(parserutils_hash *hash)
 			continue;
 
 		/* Find new index */
-		uint32_t index = _hash(e->data, e->len) % s->n_slots;
+		uint32_t mask = s->n_slots - 1;
+		uint32_t index = _hash(e->data, e->len) & mask;
 
 		/* Use linear probing to resolve collisions */
 		while (s->slots[index] != NULL)
-			index = (index + 1) % s->n_slots;
+			index = (index + 1) & mask;
 
 		/* Insert into new slot table */
 		s->slots[index] = e;
