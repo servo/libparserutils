@@ -92,7 +92,8 @@ parserutils_error parserutils_stack_destroy(parserutils_stack *stack)
  * \param item   The item to push
  * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
-parserutils_error parserutils_stack_push(parserutils_stack *stack, void *item)
+parserutils_error parserutils_stack_push(parserutils_stack *stack, 
+		const void *item)
 {
 	int32_t slot;
 

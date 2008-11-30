@@ -10,6 +10,7 @@ cscodec-utf16	UTF-16 charset codec implementation	cscodec-utf16
 cscodec-ext8	Extended 8bit charset codec		cscodec-ext8
 cscodec-8859	ISO-8859-n codec			cscodec-8859
 dict		Dictionary handling
+hash		Hashtable implementation
 rbtree		Red-black tree implementation
 filter		Input stream filtering
 inputstream	Inputstream handling			input
