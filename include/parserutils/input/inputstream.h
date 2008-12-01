@@ -85,7 +85,9 @@ static inline uintptr_t parserutils_inputstream_peek(
 		parserutils_inputstream *stream, size_t offset, size_t *length)
 {
 	parserutils_error error = PARSERUTILS_OK;
-	size_t len;
+	const parserutils_buffer *utf8;
+	const uint8_t *utf8_data;
+	size_t len, off, utf8_len;
 
 	if (stream == NULL)
 		return PARSERUTILS_INPUTSTREAM_OOD;
@@ -100,15 +102,19 @@ static inline uintptr_t parserutils_inputstream_peek(
 #endif
 #endif
 
+	utf8 = stream->utf8;
+	utf8_data = utf8->data;
+	utf8_len = utf8->length;
+	off = stream->cursor + offset;
+
 #define IS_ASCII(x) (((x) & 0x80) == 0)
 
-	if (stream->cursor + offset < stream->utf8->length) {
-		if (IS_ASCII(stream->utf8->data[stream->cursor + offset])) {
+	if (off < utf8_len) {
+		if (IS_ASCII(utf8->data[off])) {
 			len = 1;
 		} else {
 			error = parserutils_charset_utf8_char_byte_length(
-				stream->utf8->data + stream->cursor + offset,
-				&len);
+				utf8_data + off, &len);
 
 			if (error != PARSERUTILS_OK && 
 					error != PARSERUTILS_NEEDDATA)
@@ -118,8 +124,7 @@ static inline uintptr_t parserutils_inputstream_peek(
 
 #undef IS_ASCII
 
-	if (stream->cursor + offset == stream->utf8->length ||
-			error == PARSERUTILS_NEEDDATA) {
+	if (off == utf8_len || error == PARSERUTILS_NEEDDATA) {
 		uintptr_t data = parserutils_inputstream_peek_slow(stream, 
 				offset, length);
 #if !defined(NDEBUG) && defined(VERBOSE_INPUTSTREAM)
@@ -134,7 +139,7 @@ static inline uintptr_t parserutils_inputstream_peek(
 
 	*length = len;
 
-	return (uintptr_t) (stream->utf8->data + stream->cursor + offset);
+	return (uintptr_t) (utf8_data + off);
 }
 
 /**
