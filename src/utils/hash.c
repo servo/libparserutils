@@ -18,7 +18,6 @@ struct parserutils_hash {
 	slot_table *slots;
 
 	parserutils_chunkarray *data;
-	parserutils_chunkarray *entries;
 
 	parserutils_alloc alloc;
 	void *pw;
@@ -29,7 +28,7 @@ struct slot_table {
 	size_t n_slots;
 	size_t n_used;
 
-	const parserutils_hash_entry *slots[];
+	const parserutils_chunkarray_entry *slots[];
 };
 
 static inline uint32_t _hash(const uint8_t *data, size_t len);
@@ -59,7 +58,7 @@ parserutils_error parserutils_hash_create(parserutils_alloc alloc, void *pw,
 		return PARSERUTILS_NOMEM;
 
 	h->slots = alloc(0, sizeof(slot_table) + 
-			DEFAULT_SLOTS * sizeof(parserutils_hash_entry *),
+			DEFAULT_SLOTS * sizeof(parserutils_chunkarray_entry *),
 			pw);
 	if (h->slots == NULL) {
 		alloc(h, 0, pw);
@@ -67,19 +66,11 @@ parserutils_error parserutils_hash_create(parserutils_alloc alloc, void *pw,
 	}
 
 	memset(h->slots, 0, sizeof(slot_table) + 
-			DEFAULT_SLOTS * sizeof(parserutils_hash_entry *));
+			DEFAULT_SLOTS * sizeof(parserutils_chunkarray_entry *));
 	h->slots->n_slots = DEFAULT_SLOTS;
 
 	error = parserutils_chunkarray_create(alloc, pw, &h->data);
 	if (error != PARSERUTILS_OK) {
-		alloc(h->slots, 0, pw);
-		alloc(h, 0, pw);
-		return error;
-	}
-
-	error = parserutils_chunkarray_create(alloc, pw, &h->entries);
-	if (error != PARSERUTILS_OK) {
-		alloc(h->data, 0, pw);
 		alloc(h->slots, 0, pw);
 		alloc(h, 0, pw);
 		return error;
@@ -106,8 +97,6 @@ parserutils_error parserutils_hash_destroy(parserutils_hash *hash)
 
 	parserutils_chunkarray_destroy(hash->data);
 
-	parserutils_chunkarray_destroy(hash->entries);
-
 	hash->alloc(hash->slots, 0, hash->pw);
 
 	hash->alloc(hash, 0, hash->pw);
@@ -125,15 +114,13 @@ parserutils_error parserutils_hash_destroy(parserutils_hash *hash)
  * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
 parserutils_error parserutils_hash_insert(parserutils_hash *hash,
-		const uint8_t *data, size_t len,
+		const uint8_t *data, uint16_t len,
 		const parserutils_hash_entry **inserted)
 {
 	uint32_t index, mask;
 	slot_table *slots;
-	const parserutils_hash_entry **entries;
-	const parserutils_hash_entry *entry;
-	const void *idata, *ientry;
-	parserutils_hash_entry new_entry;
+	const parserutils_chunkarray_entry **entries;
+	const parserutils_chunkarray_entry *entry;
 	parserutils_error error;
 
 	if (hash == NULL || data == NULL || inserted == NULL)
@@ -149,8 +136,8 @@ parserutils_error parserutils_hash_insert(parserutils_hash *hash,
 	/* Use linear probing to resolve collisions */
 	while ((entry = entries[index]) != NULL) {
 		/* If this data is already in the hash, return it */
-		if (_cmp(data, len, entry->data, entry->len) == 0) {
-			(*inserted) = entry;
+		if (_cmp(data, len, entry->data, entry->length) == 0) {
+			(*inserted) = (const parserutils_hash_entry *) entry;
 			return PARSERUTILS_OK;
 		}
 
@@ -158,22 +145,12 @@ parserutils_error parserutils_hash_insert(parserutils_hash *hash,
 	}
 
 	/* The data isn't in the hash. Index identifies the slot to use */
-	error = parserutils_chunkarray_insert(hash->data, data, len, &idata);
+	error = parserutils_chunkarray_insert(hash->data, data, len, &entry);
 	if (error != PARSERUTILS_OK)
 		return error;
 
-	new_entry.len = len;
-	new_entry.data = idata;
-
-	error = parserutils_chunkarray_insert(hash->entries, 
-			&new_entry, sizeof(parserutils_hash_entry), &ientry);
-	if (error != PARSERUTILS_OK) {
-		/* We effectively leak the inserted data, as chunkarray 
-		 * doesn't support deletion. */
-		return error;
-	}
-
-	(*inserted) = entries[index] = ientry;
+	entries[index] = entry;
+	(*inserted) = (const parserutils_hash_entry *) entry;
 
 	/* If the table is 75% full, then increase its size */
 	if (++slots->n_used >= (slots->n_slots >> 1) + (slots->n_slots >> 2))
@@ -279,25 +256,25 @@ void grow_slots(parserutils_hash *hash)
 
 	/* Create new slot table */
 	s = hash->alloc(0, sizeof(slot_table) + 
-			new_size * sizeof(parserutils_hash_entry *),
+			new_size * sizeof(parserutils_chunkarray_entry *),
 			hash->pw);
 	if (s == NULL)
 		return;
 
 	memset(s, 0, sizeof(slot_table) + 
-			new_size * sizeof(parserutils_hash_entry *));
+			new_size * sizeof(parserutils_chunkarray_entry *));
 	s->n_slots = new_size;
 
 	/* Now, populate it with the contents of the current one */
 	for (uint32_t i = 0; i < hash->slots->n_slots; i++) {
-		const parserutils_hash_entry *e = hash->slots->slots[i];
+		const parserutils_chunkarray_entry *e = hash->slots->slots[i];
 
 		if (e == NULL)
 			continue;
 
 		/* Find new index */
 		uint32_t mask = s->n_slots - 1;
-		uint32_t index = _hash(e->data, e->len) & mask;
+		uint32_t index = _hash(e->data, e->length) & mask;
 
 		/* Use linear probing to resolve collisions */
 		while (s->slots[index] != NULL)
@@ -332,11 +309,8 @@ void parserutils_hash_dump(parserutils_hash *hash)
 	printf("Data:\n");
 	parserutils_chunkarray_dump(hash->data);
 
-	printf("Entries:\n");
-	parserutils_chunkarray_dump(hash->entries);
-
 	printf("Hash structures: %zu\n", 
 		sizeof(parserutils_hash) + sizeof(slot_table) + 
-		hash->slots->n_slots * sizeof(parserutils_hash_entry *));
+		hash->slots->n_slots * sizeof(parserutils_chunkarray_entry *));
 }
 

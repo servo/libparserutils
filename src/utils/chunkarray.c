@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "utils/chunkarray.h"
+#include "utils/utils.h"
 
 typedef struct chunk chunk;
 
@@ -99,25 +100,35 @@ parserutils_error parserutils_chunkarray_destroy(parserutils_chunkarray *array)
  * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
 parserutils_error parserutils_chunkarray_insert(parserutils_chunkarray *array,
-		const void *data, size_t len, const void **inserted)
+		const void *data, uint16_t len, 
+		const parserutils_chunkarray_entry **inserted)
 {
+	parserutils_chunkarray_entry *entry;
+	size_t required_length;
+
 	if (array == NULL || data == NULL || inserted == NULL)
 		return PARSERUTILS_BADPARM;
 
+	/* Calculate the required length. 
+	 * We require that each entry be an exact multiple of 4. */
+	required_length = ALIGN(sizeof(parserutils_chunkarray_entry) + len);
+
 	/* If we're trying to insert data larger than CHUNK_SIZE, then it 
 	 * gets its own chunk. */
-	if (len > CHUNK_SIZE) {
-		chunk *c = array->alloc(0, sizeof(chunk) + len - CHUNK_SIZE,
+	if (required_length > CHUNK_SIZE) {
+		chunk *c = array->alloc(0, 
+				sizeof(chunk) + required_length - CHUNK_SIZE,
 				array->pw);
 		if (c == NULL)
 			return PARSERUTILS_NOMEM;
 
 		/* Populate chunk */
-		(*inserted) = c->data;
-		memcpy(c->data, data, len);
-		c->used = len;
+		entry = (parserutils_chunkarray_entry *) (void *) c->data;
+		memcpy(entry->data, data, len);
+		entry->length = len;
+		c->used = required_length;
 
-		/* And put it in the used list */
+		/* And put it into the used list */
 		c->next = array->used_chunks;
 		array->used_chunks = c;
 	} else {
@@ -126,7 +137,7 @@ parserutils_error parserutils_chunkarray_insert(parserutils_chunkarray *array,
 
 		for (prev = NULL, c = array->free_chunks; c != NULL; 
 				prev = c, c = c->next) {
-			if (CHUNK_SIZE - c->used >= len)
+			if (CHUNK_SIZE - c->used >= required_length)
 				break;
 		}
 
@@ -147,9 +158,11 @@ parserutils_error parserutils_chunkarray_insert(parserutils_chunkarray *array,
 		}
 
 		/* Populate chunk */
-		(*inserted) = c->data + c->used;
-		memcpy(c->data + c->used, data, len);
-		c->used += len;
+		entry = (parserutils_chunkarray_entry *) 
+				(void *) (c->data + c->used);
+		memcpy(entry->data, data, len);
+		entry->length = len;
+		c->used += required_length;
 
 		/* If we've now filled the chunk, move it to the used list */
 		if (c->used == CHUNK_SIZE) {
@@ -162,6 +175,8 @@ parserutils_error parserutils_chunkarray_insert(parserutils_chunkarray *array,
 			array->used_chunks = c;
 		}
 	}
+
+	(*inserted) = entry;
 
 	return PARSERUTILS_OK;
 }

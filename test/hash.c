@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-//	parserutils_hash_dump(hash);
+	parserutils_hash_dump(hash);
 
 	parserutils_hash_destroy(hash);
 

@@ -29,4 +29,8 @@
 #define N_ELEMENTS(s) (sizeof((s)) / sizeof((s)[0]))
 #endif
 
+#ifndef ALIGN
+#define ALIGN(val) (((val) + 3) & ~(3))
+#endif
+
 #endif

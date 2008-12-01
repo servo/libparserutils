@@ -12,8 +12,8 @@
 #include <parserutils/functypes.h>
 
 typedef struct parserutils_hash_entry {
-	size_t len;
-	const uint8_t *data;
+	uint16_t len;
+	const uint8_t data[];
 } parserutils_hash_entry;
 
 struct parserutils_hash;
@@ -24,7 +24,7 @@ parserutils_error parserutils_hash_create(parserutils_alloc alloc, void *pw,
 parserutils_error parserutils_hash_destroy(parserutils_hash *hash);
 
 parserutils_error parserutils_hash_insert(parserutils_hash *hash,
-		const uint8_t *data, size_t len,
+		const uint8_t *data, uint16_t len,
 		const parserutils_hash_entry **inserted);
 
 #endif
