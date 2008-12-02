@@ -222,7 +222,7 @@ void parserutils_chunkarray_dump(parserutils_chunkarray *array)
 			n * CHUNK_SIZE, 
 			(count * 100) / ((float) n * CHUNK_SIZE));
 
-	printf("Total: %zu (%lu) (%lu)\n",  total, sizeof(chunk), 
-			sizeof(parserutils_chunkarray));
+	printf("Total: %zu (%u) (%u)\n",  total, (unsigned int) sizeof(chunk), 
+			(unsigned int) sizeof(parserutils_chunkarray));
 }
 
