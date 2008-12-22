@@ -197,8 +197,9 @@ void parserutils_chunkarray_dump(parserutils_chunkarray *array)
 	uint32_t n = 0;
 	size_t count = 0;
 	size_t total = sizeof(parserutils_chunkarray);
+	chunk *c;
 
-	for (chunk *c = array->used_chunks; c != NULL; c = c->next) {
+	for (c = array->used_chunks; c != NULL; c = c->next) {
 		n++;
 		count += c->used;
 		if (c->used == CHUNK_SIZE)
@@ -212,7 +213,7 @@ void parserutils_chunkarray_dump(parserutils_chunkarray *array)
 	n = 0;
 	count = 0;
 
-	for (chunk *c = array->free_chunks; c != NULL; c = c->next) {
+	for (c = array->free_chunks; c != NULL; c = c->next) {
 		n++;
 		count += c->used;
 		total += sizeof(chunk);
