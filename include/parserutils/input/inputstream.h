@@ -110,8 +110,10 @@ static inline uintptr_t parserutils_inputstream_peek(
 #define IS_ASCII(x) (((x) & 0x80) == 0)
 
 	if (off < utf8_len) {
-		if (IS_ASCII(utf8->data[off])) {
-			len = 1;
+		if (IS_ASCII(utf8_data[off])) {
+			/* Early exit for ASCII case */
+			(*length) = 1;
+			return (uintptr_t) (utf8_data + off);
 		} else {
 			error = parserutils_charset_utf8_char_byte_length(
 				utf8_data + off, &len);
