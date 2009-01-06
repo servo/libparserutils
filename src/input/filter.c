@@ -381,7 +381,7 @@ parserutils_error filter_set_encoding(parserutils_filter *input,
 
 	mibenum = parserutils_charset_mibenum_from_name(enc, strlen(enc));
 	if (mibenum == 0)
-		return PARSERUTILS_INVALID;
+		return PARSERUTILS_BADENCODING;
 
 	/* Exit early if we're already using this encoding */
 	if (input->settings.encoding == mibenum)
@@ -399,8 +399,10 @@ parserutils_error filter_set_encoding(parserutils_filter *input,
 
 	input->cd = iconv_open(
 		parserutils_charset_mibenum_to_name(input->int_enc), enc);
-	if (input->cd == (iconv_t) -1)
-		return PARSERUTILS_NOMEM;
+	if (input->cd == (iconv_t) -1) {
+		return (errno == EINVAL) ? PARSERUTILS_BADENCODING
+					 : PARSERUTILS_NOMEM;
+	}
 #else
 	if (input->read_codec != NULL) {
 		parserutils_charset_codec_destroy(input->read_codec);

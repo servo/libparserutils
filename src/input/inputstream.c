@@ -113,8 +113,7 @@ parserutils_error parserutils_inputstream_create(const char *enc,
 			error = parserutils_filter_setopt(s->input,
 					PARSERUTILS_FILTER_SET_ENCODING, 
 					&params);
-			if (error != PARSERUTILS_OK && 
-					error != PARSERUTILS_INVALID) {
+			if (error != PARSERUTILS_OK) {
 				parserutils_filter_destroy(s->input);
 				parserutils_buffer_destroy(s->public.utf8);
 				parserutils_buffer_destroy(s->raw);
