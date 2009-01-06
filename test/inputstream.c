@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 	size_t len, origlen;
 #define CHUNK_SIZE (4096)
 	uint8_t buf[CHUNK_SIZE];
-	uintptr_t c;
+	const uint8_t *c;
 	size_t clen;
 
 	if (argc != 3) {
@@ -61,8 +61,8 @@ int main(int argc, char **argv)
 
 		len -= CHUNK_SIZE;
 
-		while ((c = parserutils_inputstream_peek(stream, 0, &clen)) !=
-				PARSERUTILS_INPUTSTREAM_OOD) {
+		while (parserutils_inputstream_peek(stream, 0, &c, &clen) !=
+				PARSERUTILS_NEEDDATA) {
 			parserutils_inputstream_advance(stream, clen);
 		}
 	}
@@ -85,8 +85,8 @@ int main(int argc, char **argv)
 	assert(parserutils_inputstream_append(stream, NULL, 0) ==
 			PARSERUTILS_OK);
 
-	while ((c = parserutils_inputstream_peek(stream, 0, &clen)) !=
-			PARSERUTILS_INPUTSTREAM_EOF) {
+	while (parserutils_inputstream_peek(stream, 0, &c, &clen) !=
+			PARSERUTILS_EOF) {
 		parserutils_inputstream_advance(stream, clen);
 	}
 

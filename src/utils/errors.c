@@ -41,6 +41,9 @@ const char *parserutils_error_to_string(parserutils_error error)
 	case PARSERUTILS_BADENCODING:
 		result = "Unsupported encoding";
 		break;
+	case PARSERUTILS_EOF:
+		result = "EOF";
+		break;
 	}
 
 	return result;
@@ -69,6 +72,8 @@ parserutils_error parserutils_error_from_string(const char *str, size_t len)
 		return PARSERUTILS_NEEDDATA;
 	} else if (strncmp(str, "PARSERUTILS_BADENCODING", len) == 0) {
 		return PARSERUTILS_BADENCODING;
+	} else if (strncmp(str, "PARSERUTILS_EOF", len) == 0) {
+		return PARSERUTILS_EOF;
 	}
 
 	return PARSERUTILS_OK;

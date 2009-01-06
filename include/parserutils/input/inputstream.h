@@ -40,11 +40,6 @@ typedef struct parserutils_inputstream
 	bool had_eof;			/**< Whether EOF has been reached */
 } parserutils_inputstream;
 
-/* EOF pseudo-character */
-#define PARSERUTILS_INPUTSTREAM_EOF (0xFFFFFFFFU)
-/* Out-of-data indicator */
-#define PARSERUTILS_INPUTSTREAM_OOD (0xFFFFFFFEU)
-
 /* Create an input stream */
 parserutils_error parserutils_inputstream_create(const char *enc,
 		uint32_t encsrc, parserutils_charset_detect_func csdetect,
@@ -64,16 +59,23 @@ parserutils_error parserutils_inputstream_insert(
 		const uint8_t *data, size_t len);
 
 /* Slow form of css_inputstream_peek. */
-uintptr_t parserutils_inputstream_peek_slow(parserutils_inputstream *stream, 
-		size_t offset, size_t *length);
+parserutils_error parserutils_inputstream_peek_slow(
+		parserutils_inputstream *stream, 
+		size_t offset, const uint8_t **ptr, size_t *length);
 
 /* Look at the character in the stream that starts at 
  * offset bytes from the cursor
  *
  * \param stream  Stream to look in
  * \param offset  Byte offset of start of character
+ * \param ptr     Pointer to location to receive pointer to character data
  * \param length  Pointer to location to receive character length (in bytes)
- * \return Pointer to character data, or EOF or OOD.
+ * \return PARSERUTILS_OK on success, 
+ *                    _NEEDDATA on reaching the end of available input,
+ *                    _EOF on reaching the end of all input,
+ *                    _BADENCODING if the input cannot be decoded,
+ *                    _NOMEM on memory exhaustion,
+ *                    _BADPARM if bad parameters are passed.
  *
  * Once the character pointed to by the result of this call has been advanced
  * past (i.e. parserutils_inputstream_advance has caused the stream cursor to 
@@ -81,16 +83,17 @@ uintptr_t parserutils_inputstream_peek_slow(parserutils_inputstream *stream,
  * the data pointed to. Thus, any attempt to dereference the pointer after 
  * advancing past the data it points to is a bug.
  */
-static inline uintptr_t parserutils_inputstream_peek(
-		parserutils_inputstream *stream, size_t offset, size_t *length)
+static inline parserutils_error parserutils_inputstream_peek(
+		parserutils_inputstream *stream, size_t offset, 
+		const uint8_t **ptr, size_t *length)
 {
 	parserutils_error error = PARSERUTILS_OK;
 	const parserutils_buffer *utf8;
 	const uint8_t *utf8_data;
 	size_t len, off, utf8_len;
 
-	if (stream == NULL)
-		return PARSERUTILS_INPUTSTREAM_OOD;
+	if (stream == NULL || ptr == NULL || length == NULL)
+		return PARSERUTILS_BADPARM;
 
 #ifndef NDEBUG
 #ifdef VERBOSE_INPUTSTREAM
@@ -113,35 +116,28 @@ static inline uintptr_t parserutils_inputstream_peek(
 		if (IS_ASCII(utf8_data[off])) {
 			/* Early exit for ASCII case */
 			(*length) = 1;
-			return (uintptr_t) (utf8_data + off);
+			(*ptr) = (utf8_data + off);
+			return PARSERUTILS_OK;
 		} else {
 			error = parserutils_charset_utf8_char_byte_length(
 				utf8_data + off, &len);
 
-			if (error != PARSERUTILS_OK && 
-					error != PARSERUTILS_NEEDDATA)
-				return PARSERUTILS_INPUTSTREAM_OOD;
+			if (error == PARSERUTILS_OK) {
+				(*length) = len;
+				(*ptr) = (utf8_data + off);
+				return PARSERUTILS_OK;
+			} else if (error != PARSERUTILS_NEEDDATA) {
+				return error;
+			}
 		}
 	}
 
 #undef IS_ASCII
 
-	if (off == utf8_len || error == PARSERUTILS_NEEDDATA) {
-		uintptr_t data = parserutils_inputstream_peek_slow(stream, 
-				offset, length);
-#if !defined(NDEBUG) && defined(VERBOSE_INPUTSTREAM)
-		fprintf(stdout, "clen: %lu\n", *length);
-#endif
-		return data;
-	}
+	if (off != utf8_len && error != PARSERUTILS_NEEDDATA)
+ 	abort();
 
-#if !defined(NDEBUG) && defined(VERBOSE_INPUTSTREAM)
-	fprintf(stdout, "clen: %lu\n", len);
-#endif
-
-	*length = len;
-
-	return (uintptr_t) (utf8_data + off);
+	return parserutils_inputstream_peek_slow(stream, offset, ptr, length);
 }
 
 /**

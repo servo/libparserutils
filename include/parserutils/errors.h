@@ -19,6 +19,7 @@ typedef enum parserutils_error {
 	PARSERUTILS_FILENOTFOUND     = 4,
 	PARSERUTILS_NEEDDATA         = 5,
 	PARSERUTILS_BADENCODING      = 6,
+	PARSERUTILS_EOF              = 7
 } parserutils_error;
 
 /* Convert a parserutils error value to a string */

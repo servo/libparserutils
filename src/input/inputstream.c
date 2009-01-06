@@ -216,8 +216,14 @@ parserutils_error parserutils_inputstream_insert(
  *
  * \param stream  Stream to look in
  * \param offset  Byte offset of start of character
+ * \param ptr     Pointer to location to receive pointer to character data
  * \param length  Pointer to location to receive character length (in bytes)
- * \return Pointer to character data, or EOF or OOD.
+ * \return PARSERUTILS_OK on success, 
+ *                    _NEEDDATA on reaching the end of available input,
+ *                    _EOF on reaching the end of all input,
+ *                    _BADENCODING if the input cannot be decoded,
+ *                    _NOMEM on memory exhaustion,
+ *                    _BADPARM if bad parameters are passed.
  *
  * Once the character pointed to by the result of this call has been advanced
  * past (i.e. parserutils_inputstream_advance has caused the stream cursor to 
@@ -225,32 +231,33 @@ parserutils_error parserutils_inputstream_insert(
  * the data pointed to. Thus, any attempt to dereference the pointer after 
  * advancing past the data it points to is a bug.
  */
-uintptr_t parserutils_inputstream_peek_slow(parserutils_inputstream *stream, 
-		size_t offset, size_t *length)
+parserutils_error parserutils_inputstream_peek_slow(
+		parserutils_inputstream *stream, 
+		size_t offset, const uint8_t **ptr, size_t *length)
 {
 	parserutils_inputstream_private *s = 
 			(parserutils_inputstream_private *) stream;
 	parserutils_error error = PARSERUTILS_OK;
 	size_t len;
 
-	if (stream == NULL)
-		return PARSERUTILS_INPUTSTREAM_OOD;
+	if (stream == NULL || ptr == NULL || length == NULL)
+		return PARSERUTILS_BADPARM;
 
 	/* There's insufficient data in the buffer, so read some more */
 	if (s->raw->length == 0) {
 		/* No more data to be had */
-		return s->public.had_eof ? PARSERUTILS_INPUTSTREAM_EOF
-					 : PARSERUTILS_INPUTSTREAM_OOD;
+		return s->public.had_eof ? PARSERUTILS_EOF
+					 : PARSERUTILS_NEEDDATA;
 	}
 
 	/* Refill utf8 buffer from raw buffer */
 	error = parserutils_inputstream_refill_buffer(s);
-	/* We're currently converting all errors to OOD. Is this what we want? 
-	 * For example, the first time we fill the utf8 buffer, we could
-	 * discover that we don't support the encoding of the raw data. */
-	if (error != PARSERUTILS_OK || 
-			s->public.cursor + offset == s->public.utf8->length)
-		return PARSERUTILS_INPUTSTREAM_OOD;
+	if (error != PARSERUTILS_OK)
+		return error;
+
+	/* Refill may have succeeded, but not actually produced any new data */
+	if (s->public.cursor + offset == s->public.utf8->length)
+		return PARSERUTILS_NEEDDATA;
 
 	/* Now try the read */
 	if (IS_ASCII(s->public.utf8->data[s->public.cursor + offset])) {
@@ -261,17 +268,18 @@ uintptr_t parserutils_inputstream_peek_slow(parserutils_inputstream *stream,
 			&len);
 
 		if (error != PARSERUTILS_OK && error != PARSERUTILS_NEEDDATA)
-			return PARSERUTILS_INPUTSTREAM_OOD;
+			return error;
 
 		if (error == PARSERUTILS_NEEDDATA) {
-			return s->public.had_eof ? PARSERUTILS_INPUTSTREAM_EOF
-						 : PARSERUTILS_INPUTSTREAM_OOD;
+			return s->public.had_eof ? PARSERUTILS_EOF
+						 : PARSERUTILS_NEEDDATA;
 		}
 	}
 
-	*length = len;
+	(*length) = len;
+	(*ptr) = (s->public.utf8->data + s->public.cursor + offset);
 
-	return (uintptr_t) (s->public.utf8->data + s->public.cursor + offset);
+	return PARSERUTILS_OK;
 }
 
 #undef IS_ASCII

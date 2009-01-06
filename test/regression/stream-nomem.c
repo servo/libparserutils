@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 	uint8_t input_buffer[BUFFER_SIZE];
 //	uint8_t *buffer;
 //	size_t buflen;
-	uintptr_t c;
+	const uint8_t *c;
 	size_t clen;
 
 	if (argc != 2) {
@@ -61,8 +61,8 @@ int main(int argc, char **argv)
 	assert(parserutils_inputstream_append(stream, NULL, 0) == 
 			PARSERUTILS_OK);
 
-	while ((c = parserutils_inputstream_peek(stream, 0, &clen)) != 
-			PARSERUTILS_INPUTSTREAM_EOF)
+	while (parserutils_inputstream_peek(stream, 0, &c, &clen) != 
+			PARSERUTILS_EOF)
 		parserutils_inputstream_advance(stream, clen);
 
 /*
