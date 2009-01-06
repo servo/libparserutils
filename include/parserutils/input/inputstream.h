@@ -169,6 +169,10 @@ static inline void parserutils_inputstream_advance(
 /* Read the document charset */
 const char *parserutils_inputstream_read_charset(
 		parserutils_inputstream *stream, uint32_t *source);
+/* Change the document charset */
+parserutils_error parserutils_inputstream_change_charset(
+		parserutils_inputstream *stream, 
+		const char *enc, uint32_t source);
 
 #endif
 

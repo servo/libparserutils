@@ -107,22 +107,23 @@ parserutils_error parserutils_inputstream_create(const char *enc,
 		s->mibenum = 
 			parserutils_charset_mibenum_from_name(enc, strlen(enc));
 
-		if (s->mibenum != 0) {
-			params.encoding.name = enc;
+		if (s->mibenum == 0)
+			return PARSERUTILS_BADENCODING;
 
-			error = parserutils_filter_setopt(s->input,
-					PARSERUTILS_FILTER_SET_ENCODING, 
-					&params);
-			if (error != PARSERUTILS_OK) {
-				parserutils_filter_destroy(s->input);
-				parserutils_buffer_destroy(s->public.utf8);
-				parserutils_buffer_destroy(s->raw);
-				alloc(s, 0, pw);
-				return error;
-			}
+		params.encoding.name = enc;
 
-			s->encsrc = encsrc;
+		error = parserutils_filter_setopt(s->input,
+				PARSERUTILS_FILTER_SET_ENCODING, 
+				&params);
+		if (error != PARSERUTILS_OK) {
+			parserutils_filter_destroy(s->input);
+			parserutils_buffer_destroy(s->public.utf8);
+			parserutils_buffer_destroy(s->raw);
+			alloc(s, 0, pw);
+			return error;
 		}
+
+		s->encsrc = encsrc;
 	} else {
 		s->mibenum = 0;
 		s->encsrc = 0;
@@ -306,6 +307,53 @@ const char *parserutils_inputstream_read_charset(
 		return "UTF-8";
 
 	return parserutils_charset_mibenum_to_name(s->mibenum);
+}
+
+/**
+ * Change the source charset of the input stream
+ *
+ * \param stream   Input stream to modify
+ * \param charset  Charset name
+ * \param source   Charset source identifier
+ * \return PARSERUTILS_OK on success,
+ *         PARSERUTILS_BADPARM on invalid parameters,
+ *         PARSERUTILS_INVALID if called after data has been read from stream,
+ *         PARSERUTILS_BADENCODING if the encoding is unsupported,
+ *         PARSERUTILS_NOMEM on memory exhaustion.
+ */
+parserutils_error parserutils_inputstream_change_charset(
+		parserutils_inputstream *stream, 
+		const char *enc, uint32_t source)
+{
+	parserutils_inputstream_private *s =
+			(parserutils_inputstream_private *) stream;
+	parserutils_filter_optparams params;
+	uint16_t temp;
+	parserutils_error error;
+
+	if (stream == NULL || enc == NULL)
+		return PARSERUTILS_BADPARM;
+
+	if (s->done_first_chunk)
+		return PARSERUTILS_INVALID;
+
+	temp = parserutils_charset_mibenum_from_name(enc, strlen(enc));
+	if (temp == 0)
+		return PARSERUTILS_BADENCODING;
+
+	/* Ensure filter is using the correct encoding */
+	params.encoding.name = enc;
+	error = parserutils_filter_setopt(s->input,
+			PARSERUTILS_FILTER_SET_ENCODING, 
+			&params);
+	if (error != PARSERUTILS_OK)
+		return error;
+
+	/* Finally, replace the current settings */
+	s->mibenum = temp;
+	s->encsrc = source;
+
+	return PARSERUTILS_OK;
 }
 
 /******************************************************************************
