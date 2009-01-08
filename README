@@ -61,3 +61,11 @@ Enabling iconv() support
 
   Then build libparserutils as normal.
 
+A note on character set aliases
+-------------------------------
+
+  Libparserutils uses an external mapping file to encode relationships between
+  character set names. This is the "Aliases" file. A copy may be found at
+  test/data/Aliases. The path to this file is required when calling
+  parserutils_initialise().
+
