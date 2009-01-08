@@ -18,7 +18,7 @@ Requirements
     + Pkg-config (for the testcases)
 
   For enhanced charset support, LibParserUtils may also be configured to use
-  an iconv() implementation.
+  an iconv() implementation, see the "Enabling iconv() support" section, below.
 
 Compilation
 -----------
@@ -41,4 +41,23 @@ API documentation
   Currently, there is none. However, the code is well commented and the 
   public API may be found in the "include" directory. The testcase sources 
   may also be of use in working out how to use it.
+
+Enabling iconv() support
+------------------------
+
+  By default, libparserutils only supports the following character sets:
+
+    + UTF-16 (platform-native endian)
+    + UTF-8
+    + ISO-8859-n
+    + Windows-125n
+    + US-ASCII
+
+  Support for more character sets may be enabled through the use of iconv().
+  To enable iconv() support in libparserutils, do the following:
+
+  		$ echo "CFLAGS += -DWITH_ICONV_FILTER" \
+				>build/Makefile.config.override
+
+  Then build libparserutils as normal.
 
