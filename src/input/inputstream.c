@@ -212,7 +212,8 @@ parserutils_error parserutils_inputstream_insert(
 
 #define IS_ASCII(x) (((x) & 0x80) == 0)
 
-/* Look at the character in the stream that starts at 
+/**
+ * Look at the character in the stream that starts at 
  * offset bytes from the cursor (slow version)
  *
  * \param stream  Stream to look in

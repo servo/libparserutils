@@ -63,7 +63,8 @@ parserutils_error parserutils_inputstream_peek_slow(
 		parserutils_inputstream *stream, 
 		size_t offset, const uint8_t **ptr, size_t *length);
 
-/* Look at the character in the stream that starts at 
+/**
+ * Look at the character in the stream that starts at 
  * offset bytes from the cursor
  *
  * \param stream  Stream to look in
