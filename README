@@ -16,6 +16,7 @@ Requirements
     + GNU make or compatible
     + Perl (for the testcases)
     + Pkg-config (for the testcases)
+    + doxygen (for the API documentation)
 
   For enhanced charset support, LibParserUtils may also be configured to use
   an iconv() implementation, see the "Enabling iconv() support" section, below.
@@ -41,6 +42,12 @@ API documentation
   Currently, there is none. However, the code is well commented and the 
   public API may be found in the "include" directory. The testcase sources 
   may also be of use in working out how to use it.
+
+  Additionally, you can use doxygen to auto-generate API documentation, thus:
+
+  		$ make docs
+
+  Then open the build/docs/html/index.html file in a web browser.
 
 Enabling iconv() support
 ------------------------
