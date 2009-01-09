@@ -16,6 +16,7 @@ SED := sed
 TOUCH := touch
 LCOV := lcov
 GENHTML := genhtml
+DOXYGEN := doxygen
 
 # Toolchain flags
 WARNFLAGS := -Wall -Wextra -Wundef -Wpointer-arith -Wcast-align \
