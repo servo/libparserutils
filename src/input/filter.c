@@ -305,7 +305,7 @@ parserutils_error parserutils_filter_process_chunk(parserutils_filter *input,
  * Reset an input filter's state
  *
  * \param input  The input filter to reset
- * \param PARSERUTILS_OK on success, appropriate error otherwise
+ * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
 parserutils_error parserutils_filter_reset(parserutils_filter *input)
 {

@@ -408,7 +408,8 @@ parserutils_charset_aliases_canon *parserutils_charset_create_canon(
 /**
  * Hash function
  *
- * \param alias String to hash
+ * \param alias  String to hash
+ * \param len    Number of bytes to hash (<= strlen(alias))
  * \return The hashed value
  */
 uint32_t parserutils_charset_hash_val(const char *alias, size_t len)

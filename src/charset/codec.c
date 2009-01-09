@@ -106,7 +106,7 @@ parserutils_error parserutils_charset_codec_destroy(
  * Configure a charset codec
  *
  * \param codec   The codec to configure
- * \parem type    The codec option type to configure
+ * \param type    The codec option type to configure
  * \param params  Option-specific parameters
  * \return PARSERUTILS_OK on success, appropriate error otherwise
  */

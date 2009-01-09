@@ -34,7 +34,10 @@ static void dict_del(void *key, void *value, void *pw);
  *
  * \param alloc  Memory (de)allocation function
  * \param pw     Pointer to client-specific private data
- * \return Pointer to dictionary instance, or NULL on memory exhaustion
+ * \param dict   Pointer to location to receive dictionary instance
+ * \return PARSERUTILS_OK on success,
+ *         PARSERUTILS_NOMEM on memory exhaustion,
+ *         PARSERUTILS_BADPARM on bad parameters.
  */
 parserutils_error parserutils_dict_create(parserutils_alloc alloc, void *pw,
 		parserutils_dict **dict)

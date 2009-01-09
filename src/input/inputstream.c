@@ -313,7 +313,7 @@ const char *parserutils_inputstream_read_charset(
  * Change the source charset of the input stream
  *
  * \param stream   Input stream to modify
- * \param charset  Charset name
+ * \param enc      Charset name
  * \param source   Charset source identifier
  * \return PARSERUTILS_OK on success,
  *         PARSERUTILS_BADPARM on invalid parameters,
