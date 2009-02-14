@@ -35,8 +35,7 @@ d              := $(DIR)
 CFLAGS := $(CFLAGS) -I$(d)
 
 # Sources
-SRCS_$(d) := chunkarray.c buffer.c dict.c errors.c hash.c rbtree.c stack.c \
-		vector.c
+SRCS_$(d) := chunkarray.c buffer.c errors.c stack.c vector.c
 
 # Append to sources for component
 SOURCES += $(addprefix $(d), $(SRCS_$(d)))
