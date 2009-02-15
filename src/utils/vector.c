@@ -165,11 +165,34 @@ parserutils_error parserutils_vector_remove_last(parserutils_vector *vector)
 }
 
 /**
+ * Acquire the length (in items) of the vector.
+ *
+ * \param vector  The vector to interrogate.
+ * \param length  Pointer to location to receive length information.
+ * \return PARSERUTILS_OK on success, appropriate error otherwise
+ */
+parserutils_error parserutils_vector_get_length(parserutils_vector *vector,
+                                                size_t *length)
+{
+        if (vector == NULL)
+                return PARSERUTILS_BADPARM;
+        
+        if (length == NULL)
+                return PARSERUTILS_BADPARM;
+        
+        *length = vector->current_item + 1;
+        
+        return PARSERUTILS_OK;
+}
+
+/**
  * Iterate over a vector
  *
  * \param vector  The vector to iterate over
  * \param ctx     Pointer to an integer for the iterator to use as context.
  * \return Pointer to current item, or NULL if no more
+ *
+ * \note The value pointed to by \a ctx must be zero to begin the iteration.
  */
 const void *parserutils_vector_iterate(const parserutils_vector *vector, 
 		int32_t *ctx)
