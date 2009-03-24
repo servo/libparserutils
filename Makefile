@@ -22,9 +22,9 @@ I := include/parserutils
 INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/errors.h;$(I)/functypes.h;$(I)/parserutils.h;$(I)/types.h
 
 I := include/parserutils/charset
-INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/codec.h;$(I)/mibenum.h;$(I)utf16.h;$(I)/utf8.h
+INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/codec.h;$(I)/mibenum.h;$(I)/utf16.h;$(I)/utf8.h
 
-I := include/parserutils/inputstream
+I := include/parserutils/input
 INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/inputstream.h
 
 I := include/parserutils/utils
