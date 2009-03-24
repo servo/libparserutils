@@ -11,9 +11,3 @@ cscodec-ext8	Extended 8bit charset codec		cscodec-ext8
 cscodec-8859	ISO-8859-n codec			cscodec-8859
 filter		Input stream filtering
 inputstream	Inputstream handling			input
-
-# Regression tests
-regression/cscodec-segv	Segfault in charset codecs
-regression/filter-segv	Segfault in input filtering
-regression/stream-nomem	Inputstream buffer expansion
-regression/filter-badenc-segv	Segfault on resetting bad encoding in filter
