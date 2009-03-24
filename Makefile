@@ -1,46 +1,34 @@
-# Toolchain definitions for building on the destination platform
-CC := gcc
-AR := ar
-LD := gcc
+# Component settings
+COMPONENT := parserutils
+# Default to a static library
+COMPONENT_TYPE ?= lib-static
 
-CP := cp
-RM := rm
-MKDIR := mkdir
-MV := mv
-ECHO := echo
-MAKE := make
-PERL := perl
-PKGCONFIG := pkg-config
-INSTALL := install
-SED := sed
-TOUCH := touch
-LCOV := lcov
-GENHTML := genhtml
-DOXYGEN := doxygen
+# Setup the tooling
+include build/makefiles/Makefile.tools
+
+TESTRUNNER := $(PERL) build/testtools/testrunner.pl
 
 # Toolchain flags
 WARNFLAGS := -Wall -Wextra -Wundef -Wpointer-arith -Wcast-align \
 	-Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes \
 	-Wmissing-declarations -Wnested-externs -Werror -pedantic
-CFLAGS = -std=c99 -D_BSD_SOURCE -I$(TOP)/include/ $(WARNFLAGS)
-RELEASECFLAGS = $(CFLAGS) -DNDEBUG -O2
-DEBUGCFLAGS = $(CFLAGS) -O0 -g
-ARFLAGS := -cru
-LDFLAGS = -L$(TOP)/
+CFLAGS := $(CFLAGS) -std=c99 -D_BSD_SOURCE -I$(CURDIR)/include/ \
+	-I$(CURDIR)/src $(WARNFLAGS) 
 
-CPFLAGS :=
-RMFLAGS := -f
-MKDIRFLAGS := -p
-MVFLAGS :=
-ECHOFLAGS := 
-MAKEFLAGS :=
-PKGCONFIGFLAGS :=
-TOUCHFLAGS :=
+include build/makefiles/Makefile.top
 
-EXEEXT :=
+# Extra installation rules
+I := include/parserutils
+INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/errors.h;$(I)/functypes.h;$(I)/parserutils.h;$(I)/types.h
 
-# Default installation prefix
-PREFIX ?= /usr/local
+I := include/parserutils/charset
+INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/codec.h;$(I)/mibenum.h;$(I)utf16.h;$(I)/utf8.h
 
+I := include/parserutils/inputstream
+INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/inputstream.h
 
-include build/Makefile.common
+I := include/parserutils/utils
+INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/buffer.h;$(I)/stack.h;$(I)/vector.h
+
+INSTALL_ITEMS := $(INSTALL_ITEMS) /lib/pkgconfig:lib$(COMPONENT).pc.in
+INSTALL_ITEMS := $(INSTALL_ITEMS) /lib:$(BUILDDIR)/lib$(COMPONENT)$(LIBEXT)
