@@ -1,6 +1,6 @@
 # Tests
-DIR_TEST_SOURCES := cscodec-segv.c filter-segv.c stream-nomem.c \
-	filter-badenc-segv.c
+DIR_TEST_ITEMS := cscodec-segv:cscodec-segv.c filter-segv:filter-segv.c \
+	stream-nomem:stream-nomem.c filter-badenc-segv:filter-badenc-segv.c
 
 CFLAGS := $(CFLAGS) -I$(CURDIR)/test
 

@@ -25,7 +25,9 @@ int main (int argc, char **argv)
 
 	parserutils_charset_aliases_create(argv[1], myrealloc, NULL);
 
+#ifndef NDEBUG
 	parserutils_charset_aliases_dump();
+#endif
 
 	c = parserutils_charset_alias_canonicalise("moose", 5);
 	if (c) {
