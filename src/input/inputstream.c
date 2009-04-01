@@ -502,9 +502,6 @@ parserutils_error parserutils_inputstream_strip_bom(uint16_t mibenum,
 				SLEN("UTF-32LE"));
 	}
 
-	/** \todo Handle unmarked UTF-16 and UTF-32. Endianness is specified 
-	 * by the BOM, if present, or is assumed to be big endian. */
-
 #define UTF32_BOM_LEN (4)
 #define UTF16_BOM_LEN (2)
 #define UTF8_BOM_LEN  (3)
