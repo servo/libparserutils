@@ -1,5 +1,6 @@
 # Component settings
 COMPONENT := parserutils
+COMPONENT_VERSION := 0.0.1
 # Default to a static library
 COMPONENT_TYPE ?= lib-static
 
@@ -18,17 +19,21 @@ CFLAGS := $(CFLAGS) -std=c99 -D_BSD_SOURCE -I$(CURDIR)/include/ \
 include build/makefiles/Makefile.top
 
 # Extra installation rules
-I := include/parserutils
-INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/errors.h;$(I)/functypes.h;$(I)/parserutils.h;$(I)/types.h
+Is := include/parserutils
+I := /include/parserutils$(major-version)/parserutils
+INSTALL_ITEMS := $(INSTALL_ITEMS) $(I):$(Is)/errors.h;$(Is)/functypes.h;$(Is)/parserutils.h;$(Is)/types.h
 
-I := include/parserutils/charset
-INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/codec.h;$(I)/mibenum.h;$(I)/utf16.h;$(I)/utf8.h
+Is := include/parserutils/charset
+I := /include/parserutils$(major-version)/parserutils/charset
+INSTALL_ITEMS := $(INSTALL_ITEMS) $(I):$(Is)/codec.h;$(Is)/mibenum.h;$(Is)/utf16.h;$(Is)/utf8.h
 
-I := include/parserutils/input
-INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/inputstream.h
+Is := include/parserutils/input
+I := /include/parserutils$(major-version)/parserutils/input
+INSTALL_ITEMS := $(INSTALL_ITEMS) $(I):$(Is)/inputstream.h
 
-I := include/parserutils/utils
-INSTALL_ITEMS := $(INSTALL_ITEMS) /$(I):$(I)/buffer.h;$(I)/stack.h;$(I)/vector.h
+Is := include/parserutils/utils
+I := /include/parserutils$(major-version)/parserutils/utils
+INSTALL_ITEMS := $(INSTALL_ITEMS) $(I):$(Is)/buffer.h;$(Is)/stack.h;$(Is)/vector.h
 
 INSTALL_ITEMS := $(INSTALL_ITEMS) /lib/pkgconfig:lib$(COMPONENT).pc.in
-INSTALL_ITEMS := $(INSTALL_ITEMS) /lib:$(BUILDDIR)/lib$(COMPONENT)$(LIBEXT)
+INSTALL_ITEMS := $(INSTALL_ITEMS) /lib:$(OUTPUT)
