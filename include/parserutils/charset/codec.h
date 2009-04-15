@@ -60,7 +60,7 @@ typedef enum parserutils_charset_codec_errormode {
 	/** Replace unrepresentable characters with single alternate */
 	PARSERUTILS_CHARSET_CODEC_ERROR_LOOSE    = 1,
 	/** Transliterate unrepresentable characters, if possible */
-	PARSERUTILS_CHARSET_CODEC_ERROR_TRANSLIT = 2,
+	PARSERUTILS_CHARSET_CODEC_ERROR_TRANSLIT = 2
 } parserutils_charset_codec_errormode;
 
 /**
@@ -68,7 +68,7 @@ typedef enum parserutils_charset_codec_errormode {
  */
 typedef enum parserutils_charset_codec_opttype {
 	/** Set codec error mode */
-	PARSERUTILS_CHARSET_CODEC_ERROR_MODE  = 1,
+	PARSERUTILS_CHARSET_CODEC_ERROR_MODE  = 1
 } parserutils_charset_codec_opttype;
 
 /**

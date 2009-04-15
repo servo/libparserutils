@@ -19,7 +19,7 @@ typedef struct parserutils_filter parserutils_filter;
  * Input filter option types
  */
 typedef enum parserutils_filter_opttype {
-	PARSERUTILS_FILTER_SET_ENCODING       = 0,
+	PARSERUTILS_FILTER_SET_ENCODING       = 0
 } parserutils_filter_opttype;
 
 /**
