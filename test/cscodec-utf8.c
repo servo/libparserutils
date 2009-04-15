@@ -187,7 +187,7 @@ void run_test(line_ctx *ctx)
 {
 	static int testnum;
 	size_t destlen = ctx->bufused * 4;
-	uint8_t dest[destlen];
+	uint8_t *dest = alloca(destlen);
 	uint8_t *pdest = dest;
 	const uint8_t *psrc = ctx->buf;
 	size_t srclen = ctx->bufused;
@@ -203,7 +203,7 @@ void run_test(line_ctx *ctx)
 				&pdest, &destlen) == ctx->exp_ret);
 	} else {
 		size_t templen = ctx->bufused * 4;
-		uint8_t temp[templen];
+		uint8_t *temp = alloca(templen);
 		uint8_t *ptemp = temp;
 		const uint8_t *ptemp2;
 		size_t templen2;

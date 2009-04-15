@@ -171,11 +171,12 @@ bool handle_line(const char *data, size_t datalen, void *pw)
 		} else if (strncasecmp(data+1, "enc", 3) == 0) {
 			const char *enc = data + 5;
 			const char *end;
+			char *enc_name;
 
 			for (end = enc; !isspace(*end); end++)
 				;
 
-			char enc_name[end - enc + 1];
+			enc_name = alloca(end - enc + 1);
 			memcpy(enc_name, enc, end - enc);
 			enc_name[end - enc] = 0;
 
@@ -203,7 +204,7 @@ void run_test(line_ctx *ctx)
 {
 	static int testnum;
 	size_t destlen = ctx->bufused * 4;
-	uint8_t dest[destlen];
+	uint8_t *dest = alloca(destlen);
 	uint8_t *pdest = dest;
 	const uint8_t *psrc = ctx->buf;
 	size_t srclen = ctx->bufused;
@@ -219,7 +220,7 @@ void run_test(line_ctx *ctx)
 				&pdest, &destlen) == ctx->exp_ret);
 	} else {
 		size_t templen = ctx->bufused * 4;
-		uint8_t temp[templen];
+		uint8_t *temp = alloca(templen);
 		uint8_t *ptemp = temp;
 		const uint8_t *ptemp2;
 		size_t templen2;

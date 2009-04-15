@@ -66,13 +66,13 @@ int main(int argc, char **argv)
 
 	ctx.buf = malloc(ctx.buflen);
 	if (ctx.buf == NULL) {
-		printf("Failed allocating %zu bytes\n", ctx.buflen);
+		printf("Failed allocating %u bytes\n", (int) ctx.buflen);
 		return 1;
 	}
 
 	ctx.exp = malloc(ctx.buflen);
 	if (ctx.exp == NULL) {
-		printf("Failed allocating %zu bytes\n", ctx.buflen);
+		printf("Failed allocating %u bytes\n", (int) ctx.buflen);
 		free(ctx.buf);
 		return 1;
 	}
@@ -193,6 +193,8 @@ bool handle_line(const char *data, size_t datalen, void *pw)
 		if (ctx->indata) {
 			/* Process "&#xNNNN" as 16-bit code units.  */
 			while (datalen) {
+				uint16_t nCodePoint;
+
 				if (data[0] == '\n') {
 					ctx->buf[ctx->bufused++] = *data++;
 					--datalen;
@@ -205,8 +207,7 @@ bool handle_line(const char *data, size_t datalen, void *pw)
 					&& isxdigit(data[6]));
 				/* UTF-16 code is always host endian (different
 				   than UCS-32 !).  */
-				const uint16_t nCodePoint = 
-						(hex2digit(data[3]) << 12) | 
+				nCodePoint = (hex2digit(data[3]) << 12) | 
 						(hex2digit(data[4]) <<  8) | 
 						(hex2digit(data[5]) <<  4) | 
 						hex2digit(data[6]);
@@ -220,6 +221,8 @@ bool handle_line(const char *data, size_t datalen, void *pw)
 		if (ctx->inexp) {
 			/* Process "&#xXXXXYYYY as 32-bit code units.  */
 			while (datalen) {
+				uint32_t nCodePoint;
+
 				if (data[0] == '\n') {
 					ctx->exp[ctx->expused++] = *data++;
 					--datalen;
@@ -234,7 +237,7 @@ bool handle_line(const char *data, size_t datalen, void *pw)
 					&& isxdigit(data[10]));
 				/* UCS-4 code is always big endian, so convert
 				   host endian to big endian.  */
-				const uint32_t nCodePoint =
+				nCodePoint =
 					htonl((hex2digit(data[3]) << 28)
 					| (hex2digit(data[4]) << 24)
 					| (hex2digit(data[5]) << 20)
@@ -259,7 +262,7 @@ void run_test(line_ctx *ctx)
 {
 	static int testnum;
 	size_t destlen = ctx->bufused * 4;
-	uint8_t dest[destlen];
+	uint8_t *dest = alloca(destlen);
 	uint8_t *pdest = dest;
 	const uint8_t *psrc = ctx->buf;
 	size_t srclen = ctx->bufused;
@@ -275,7 +278,7 @@ void run_test(line_ctx *ctx)
 				&pdest, &destlen) == ctx->exp_ret);
 	} else {
 		size_t templen = ctx->bufused * 4;
-		uint8_t temp[templen];
+		uint8_t *temp = alloca(templen);
 		uint8_t *ptemp = temp;
 		const uint8_t *ptemp2;
 		size_t templen2;
