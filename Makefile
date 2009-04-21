@@ -30,19 +30,19 @@ include build/makefiles/Makefile.top
 
 # Extra installation rules
 Is := include/parserutils
-I := /include/parserutils$(major-version)/parserutils
+I := /include/parserutils
 INSTALL_ITEMS := $(INSTALL_ITEMS) $(I):$(Is)/errors.h;$(Is)/functypes.h;$(Is)/parserutils.h;$(Is)/types.h
 
 Is := include/parserutils/charset
-I := /include/parserutils$(major-version)/parserutils/charset
+I := /include/parserutils/charset
 INSTALL_ITEMS := $(INSTALL_ITEMS) $(I):$(Is)/codec.h;$(Is)/mibenum.h;$(Is)/utf16.h;$(Is)/utf8.h
 
 Is := include/parserutils/input
-I := /include/parserutils$(major-version)/parserutils/input
+I := /include/parserutils/input
 INSTALL_ITEMS := $(INSTALL_ITEMS) $(I):$(Is)/inputstream.h
 
 Is := include/parserutils/utils
-I := /include/parserutils$(major-version)/parserutils/utils
+I := /include/parserutils/utils
 INSTALL_ITEMS := $(INSTALL_ITEMS) $(I):$(Is)/buffer.h;$(Is)/stack.h;$(Is)/vector.h
 
 INSTALL_ITEMS := $(INSTALL_ITEMS) /lib/pkgconfig:lib$(COMPONENT).pc.in

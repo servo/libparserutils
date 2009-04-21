@@ -6,5 +6,5 @@ includedir=${prefix}/include
 Name: libparserutils
 Description: Utility library for facilitating parser development
 Version: VERSION
-Libs: -L${libdir} -lparserutilsMAJOR
-Cflags: -I${includedir}/parserutilsMAJOR
+Libs: -L${libdir} -lparserutils
+Cflags: -I${includedir}
