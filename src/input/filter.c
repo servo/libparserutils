@@ -373,7 +373,6 @@ parserutils_error filter_set_encoding(parserutils_filter *input,
 		const char *enc)
 {
 	parserutils_error error = PARSERUTILS_OK;
-	const char *old_enc;
 	uint16_t mibenum;
 
 	if (input == NULL || enc == NULL)
@@ -386,10 +385,6 @@ parserutils_error filter_set_encoding(parserutils_filter *input,
 	/* Exit early if we're already using this encoding */
 	if (input->settings.encoding == mibenum)
 		return PARSERUTILS_OK;
-
-	old_enc = parserutils_charset_mibenum_to_name(input->settings.encoding);
-	if (old_enc == NULL)
-		old_enc = "UTF-8";
 
 #ifdef WITH_ICONV_FILTER
 	if (input->cd != (iconv_t) -1) {
