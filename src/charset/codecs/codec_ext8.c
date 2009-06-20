@@ -9,9 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* These two are for htonl / ntohl */
-#include <arpa/inet.h>
+/* These three are for htonl / ntohl */
+#include <sys/types.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include <parserutils/charset/mibenum.h>
 
@@ -98,12 +99,12 @@ bool charset_ext8_codec_handles_charset(const char *charset)
 	uint32_t i;
 	uint16_t match = parserutils_charset_mibenum_from_name(charset,
 			strlen(charset));
-	
+
 	if (known_charsets[0].mib == 0) {
 		for (i = 0; i < N_ELEMENTS(known_charsets); i++) {
-			known_charsets[i].mib = 
+			known_charsets[i].mib =
 				parserutils_charset_mibenum_from_name(
-						known_charsets[i].name, 
+						known_charsets[i].name,
 						known_charsets[i].len);
 		}
 	}
@@ -224,7 +225,7 @@ parserutils_error charset_ext8_codec_encode(parserutils_charset_codec *codec,
 		uint32_t *pwrite = c->write_buf;
 
 		while (c->write_len > 0) {
-			error = charset_ext8_from_ucs4(c, pwrite[0], 
+			error = charset_ext8_from_ucs4(c, pwrite[0],
 					dest, destlen);
 			if (error != PARSERUTILS_OK) {
 				uint32_t len;
@@ -244,13 +245,13 @@ parserutils_error charset_ext8_codec_encode(parserutils_charset_codec *codec,
 
 	/* Now process the characters for this call */
 	while (*sourcelen > 0) {
-		ucs4 = ntohl(*((uint32_t *) (void *) *source));
+		ucs4 = (uint32_t) ntohl(*((uint32_t *) (void *) *source));
 		towrite = &ucs4;
 		towritelen = 1;
 
 		/* Output current characters */
 		while (towritelen > 0) {
-			error = charset_ext8_from_ucs4(c, towrite[0], dest, 
+			error = charset_ext8_from_ucs4(c, towrite[0], dest,
 					destlen);
 			if (error != PARSERUTILS_OK) {
 				uint32_t len;
@@ -305,9 +306,9 @@ parserutils_error charset_ext8_codec_encode(parserutils_charset_codec *codec,
  * read, if the result is _OK or _NOMEM. Any remaining output for the
  * character will be buffered by the codec for writing on the next call.
  *
- * In the case of the result being _INVALID, ::source will point _at_ the 
- * last input character read; nothing will be written or buffered for the 
- * failed character. It is up to the client to fix the cause of the failure 
+ * In the case of the result being _INVALID, ::source will point _at_ the
+ * last input character read; nothing will be written or buffered for the
+ * failed character. It is up to the client to fix the cause of the failure
  * and retry the decoding process.
  *
  * Note that, if failure occurs whilst attempting to write any output
@@ -341,7 +342,8 @@ parserutils_error charset_ext8_codec_decode(parserutils_charset_codec *codec,
 		uint32_t *pread = c->read_buf;
 
 		while (c->read_len > 0 && *destlen >= c->read_len * 4) {
-			*((uint32_t *) (void *) *dest) = htonl(pread[0]);
+			*((uint32_t *) (void *) *dest) =
+					(uint32_t) htonl(pread[0]);
 
 			*dest += 4;
 			*destlen -= 4;
@@ -411,9 +413,9 @@ parserutils_error charset_ext8_codec_reset(parserutils_charset_codec *codec)
  * read, if the result is _OK or _NOMEM. Any remaining output for the
  * character will be buffered by the codec for writing on the next call.
  *
- * In the case of the result being _INVALID, ::source will point _at_ the 
- * last input character read; nothing will be written or buffered for the 
- * failed character. It is up to the client to fix the cause of the failure 
+ * In the case of the result being _INVALID, ::source will point _at_ the
+ * last input character read; nothing will be written or buffered for the
+ * failed character. It is up to the client to fix the cause of the failure
  * and retry the decoding process.
  *
  * ::sourcelen will be reduced appropriately on exit.
@@ -447,9 +449,9 @@ parserutils_error charset_ext8_codec_read_char(charset_ext8_codec *c,
 		return error;
 	} else if (error == PARSERUTILS_INVALID) {
 		/* Illegal input sequence */
-	
+
 		/* Strict errormode; simply flag invalid character */
-		if (c->base.errormode == 
+		if (c->base.errormode ==
 				PARSERUTILS_CHARSET_CODEC_ERROR_STRICT) {
 			return PARSERUTILS_INVALID;
 		}
@@ -490,7 +492,7 @@ parserutils_error charset_ext8_codec_output_decoded_char(charset_ext8_codec *c,
 		return PARSERUTILS_NOMEM;
 	}
 
-	*((uint32_t *) (void *) *dest) = htonl(ucs4);
+	*((uint32_t *) (void *) *dest) = (uint32_t) htonl(ucs4);
 	*dest += 4;
 	*destlen -= 4;
 
@@ -533,14 +535,14 @@ parserutils_error charset_ext8_from_ucs4(charset_ext8_codec *c,
 		}
 
 		if (i == 128) {
-			if (c->base.errormode == 
+			if (c->base.errormode ==
 					PARSERUTILS_CHARSET_CODEC_ERROR_STRICT)
 				return PARSERUTILS_INVALID;
 			else
 				out = '?';
 		} else {
 			out = 0x80 + i;
-		}	
+		}
 	}
 
 	*(*s) = out;
