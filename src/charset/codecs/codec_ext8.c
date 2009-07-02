@@ -9,18 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef BUILD_TARGET_windows
-#include <winsock.h>
-#else
-/* These three are for htonl / ntohl */
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#endif
-
 #include <parserutils/charset/mibenum.h>
 
 #include "charset/codecs/codec_impl.h"
+#include "utils/endian.h"
 #include "utils/utils.h"
 
 #include "charset/codecs/ext8_tables.h"
@@ -249,7 +241,7 @@ parserutils_error charset_ext8_codec_encode(parserutils_charset_codec *codec,
 
 	/* Now process the characters for this call */
 	while (*sourcelen > 0) {
-		ucs4 = (uint32_t) ntohl(*((uint32_t *) (void *) *source));
+		ucs4 = endian_big_to_host(*((uint32_t *) (void *) *source));
 		towrite = &ucs4;
 		towritelen = 1;
 
@@ -347,7 +339,7 @@ parserutils_error charset_ext8_codec_decode(parserutils_charset_codec *codec,
 
 		while (c->read_len > 0 && *destlen >= c->read_len * 4) {
 			*((uint32_t *) (void *) *dest) =
-					(uint32_t) htonl(pread[0]);
+					endian_host_to_big(pread[0]);
 
 			*dest += 4;
 			*destlen -= 4;
@@ -496,7 +488,7 @@ parserutils_error charset_ext8_codec_output_decoded_char(charset_ext8_codec *c,
 		return PARSERUTILS_NOMEM;
 	}
 
-	*((uint32_t *) (void *) *dest) = (uint32_t) htonl(ucs4);
+	*((uint32_t *) (void *) *dest) = endian_host_to_big(ucs4);
 	*dest += 4;
 	*destlen -= 4;
 
