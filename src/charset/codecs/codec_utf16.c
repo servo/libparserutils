@@ -8,10 +8,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef BUILD_TARGET_windows
+#include <winsock.h>
+#else
 /* These three are for htonl / ntohl */
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#endif
 
 #include <parserutils/charset/mibenum.h>
 #include <parserutils/charset/utf16.h>
