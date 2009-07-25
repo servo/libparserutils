@@ -10,7 +10,7 @@
 
 static inline bool endian_host_is_le(void)
 {
-	uint32_t magic = 0x10000002;
+	static uint32_t magic = 0x10000002;
 
 	return (((uint8_t *) &magic)[0] == 0x02);
 }
