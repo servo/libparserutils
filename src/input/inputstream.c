@@ -376,15 +376,29 @@ parserutils_error parserutils_inputstream_refill_buffer(
 
 	/* If this is the first chunk of data, we must detect the charset and
 	 * strip the BOM, if one exists */
-	if (!stream->done_first_chunk) {
+	if (stream->done_first_chunk == false) {
 		parserutils_filter_optparams params;
 
 		if (stream->csdetect != NULL) {
 			error = stream->csdetect(stream->raw->data, 
 				stream->raw->length,
 				&stream->mibenum, &stream->encsrc);
-			if (error != PARSERUTILS_OK)
-				return error;
+			if (error != PARSERUTILS_OK) {
+				if (error != PARSERUTILS_NEEDDATA ||
+						stream->public.had_eof == false)
+					return error;
+
+				/* We don't have enough data to detect the 
+				 * input encoding, but we're not going to get 
+				 * any more as we've been notified of EOF. 
+				 * Therefore, fall back to UTF-8. */
+				stream->mibenum = 
+					parserutils_charset_mibenum_from_name(
+						"UTF-8", SLEN("UTF-8"));
+				stream->encsrc = 0;
+
+				error = PARSERUTILS_OK;
+			}
 		} else {
 			/* Default to UTF-8 */
 			stream->mibenum = 
