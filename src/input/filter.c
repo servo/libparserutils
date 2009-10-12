@@ -393,7 +393,8 @@ parserutils_error filter_set_encoding(parserutils_filter *input,
 	}
 
 	input->cd = iconv_open(
-		parserutils_charset_mibenum_to_name(input->int_enc), enc);
+		parserutils_charset_mibenum_to_name(input->int_enc),
+		parserutils_charset_mibenum_to_name(mibenum));
 	if (input->cd == (iconv_t) -1) {
 		return (errno == EINVAL) ? PARSERUTILS_BADENCODING
 					 : PARSERUTILS_NOMEM;
