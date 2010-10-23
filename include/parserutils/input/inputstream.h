@@ -136,7 +136,7 @@ static inline parserutils_error parserutils_inputstream_peek(
 #undef IS_ASCII
 
 	if (off != utf8_len && error != PARSERUTILS_NEEDDATA)
- 	abort();
+		abort();
 
 	return parserutils_inputstream_peek_slow(stream, offset, ptr, length);
 }
