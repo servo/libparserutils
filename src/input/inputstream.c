@@ -379,6 +379,9 @@ parserutils_error parserutils_inputstream_refill_buffer(
 	if (stream->done_first_chunk == false) {
 		parserutils_filter_optparams params;
 
+		/* If there is a charset detection routine, give it an 
+		 * opportunity to override any charset specified when the
+		 * inputstream was created */
 		if (stream->csdetect != NULL) {
 			error = stream->csdetect(stream->raw->data, 
 				stream->raw->length,
@@ -391,16 +394,23 @@ parserutils_error parserutils_inputstream_refill_buffer(
 				/* We don't have enough data to detect the 
 				 * input encoding, but we're not going to get 
 				 * any more as we've been notified of EOF. 
-				 * Therefore, fall back to UTF-8. */
-				stream->mibenum = 
-					parserutils_charset_mibenum_from_name(
-						"UTF-8", SLEN("UTF-8"));
-				stream->encsrc = 0;
-
+				 * Therefore, leave the encoding alone
+				 * so that any charset specified when the
+				 * inputstream was created will be preserved.
+				 * If there was no charset specified, then
+				 * we'll default to UTF-8, below */
 				error = PARSERUTILS_OK;
 			}
-		} else {
-			/* Default to UTF-8 */
+		}
+
+		/* Default to UTF-8 if there is still no encoding information 
+		 * We'll do this if there was no encoding specified up-front
+		 * and:
+		 *    1) there was no charset detection routine
+		 * or 2) there was insufficient data for the charset 
+		 *       detection routine to detect an encoding
+		 */
+		if (stream->mibenum == 0) {
 			stream->mibenum = 
 				parserutils_charset_mibenum_from_name("UTF-8", 
 					SLEN("UTF-8"));
