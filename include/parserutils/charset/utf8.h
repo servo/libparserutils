@@ -12,6 +12,11 @@
 #ifndef parserutils_charset_utf8_h_
 #define parserutils_charset_utf8_h_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <inttypes.h>
 
 #include <parserutils/errors.h>
@@ -33,6 +38,10 @@ parserutils_error parserutils_charset_utf8_next(const uint8_t *s, uint32_t len,
 
 parserutils_error parserutils_charset_utf8_next_paranoid(const uint8_t *s, 
 		uint32_t len, uint32_t off, uint32_t *nextoff);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

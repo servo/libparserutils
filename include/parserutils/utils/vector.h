@@ -8,6 +8,11 @@
 #ifndef parserutils_utils_vector_h_
 #define parserutils_utils_vector_h_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stddef.h>
 
 #include <parserutils/errors.h>
@@ -31,6 +36,10 @@ const void *parserutils_vector_iterate(const parserutils_vector *vector,
 		int32_t *ctx);
 const void *parserutils_vector_peek(const parserutils_vector *vector,
 		int32_t ctx);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

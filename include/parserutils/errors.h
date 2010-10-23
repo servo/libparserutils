@@ -8,6 +8,11 @@
 #ifndef parserutils_errors_h_
 #define parserutils_errors_h_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stddef.h>
 
 typedef enum parserutils_error {
@@ -26,6 +31,10 @@ typedef enum parserutils_error {
 const char *parserutils_error_to_string(parserutils_error error);
 /* Convert a string to a parserutils error value */
 parserutils_error parserutils_error_from_string(const char *str, size_t len);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

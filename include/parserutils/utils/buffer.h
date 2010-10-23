@@ -8,6 +8,11 @@
 #ifndef parserutils_utils_buffer_h_
 #define parserutils_utils_buffer_h_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <parserutils/errors.h>
 #include <parserutils/functypes.h>
 
@@ -36,6 +41,10 @@ parserutils_error parserutils_buffer_discard(parserutils_buffer *buffer,
 parserutils_error parserutils_buffer_grow(parserutils_buffer *buffer);
 
 parserutils_error parserutils_buffer_randomise(parserutils_buffer *buffer);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

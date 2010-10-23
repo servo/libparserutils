@@ -8,8 +8,17 @@
 #ifndef parserutils_types_h_
 #define parserutils_types_h_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stdbool.h>
 #include <inttypes.h>
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

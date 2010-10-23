@@ -8,6 +8,11 @@
 #ifndef parserutils_parserutils_h_
 #define parserutils_parserutils_h_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <parserutils/errors.h>
 #include <parserutils/functypes.h>
 #include <parserutils/types.h>
@@ -18,6 +23,10 @@ parserutils_error parserutils_initialise(const char *aliases_file,
 
 /* Clean up after ParserUtils */
 parserutils_error parserutils_finalise(parserutils_alloc alloc, void *pw);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

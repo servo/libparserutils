@@ -8,6 +8,11 @@
 #ifndef parserutils_utils_stack_h_
 #define parserutils_utils_stack_h_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stddef.h>
 
 #include <parserutils/errors.h>
@@ -25,6 +30,10 @@ parserutils_error parserutils_stack_push(parserutils_stack *stack,
 parserutils_error parserutils_stack_pop(parserutils_stack *stack, void *item);
 
 void *parserutils_stack_get_current(parserutils_stack *stack);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

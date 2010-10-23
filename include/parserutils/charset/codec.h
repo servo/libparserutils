@@ -8,6 +8,11 @@
 #ifndef parserutils_charset_codec_h_
 #define parserutils_charset_codec_h_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <inttypes.h>
 
 #include <parserutils/errors.h>
@@ -112,5 +117,9 @@ parserutils_error parserutils_charset_codec_decode(
 /* Reset a charset codec */
 parserutils_error parserutils_charset_codec_reset(
 		parserutils_charset_codec *codec);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
