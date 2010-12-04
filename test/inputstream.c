@@ -36,10 +36,6 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	/* Initialise library */
-	assert(parserutils_initialise(argv[1], myrealloc, NULL) ==
-			PARSERUTILS_OK);
-
 	assert(parserutils_inputstream_create("UTF-8", 1, NULL,
 			myrealloc, NULL, &stream) == PARSERUTILS_OK);
 
@@ -93,8 +89,6 @@ int main(int argc, char **argv)
 	}
 
 	parserutils_inputstream_destroy(stream);
-
-	assert(parserutils_finalise(myrealloc, NULL) == PARSERUTILS_OK);
 
 	printf("PASS\n");
 

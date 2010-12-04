@@ -1,4 +1,12 @@
 # Sources
-DIR_SOURCES := aliases.c charset.c codec.c
+DIR_SOURCES := aliases.c codec.c
+
+$(DIR)aliases.c: $(DIR)aliases.inc
+
+$(DIR)aliases.inc: build/make-aliases.pl build/Aliases
+	$(VQ)$(ECHO) "   ALIAS: $@"
+	$(Q)$(PERL) build/make-aliases.pl
+
+CLEAN_ITEMS := $(CLEAN_ITEMS) $(DIR)aliases.inc
 
 include build/makefiles/Makefile.subdir

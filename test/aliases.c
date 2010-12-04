@@ -5,15 +5,6 @@
 
 #include "testutils.h"
 
-extern void charset_aliases_dump(void);
-
-static void *myrealloc(void *ptr, size_t len, void *pw)
-{
-	UNUSED(pw);
-
-	return realloc(ptr, len);
-}
-
 int main (int argc, char **argv)
 {
 	parserutils_charset_aliases_canon *c;
@@ -22,12 +13,6 @@ int main (int argc, char **argv)
 		printf("Usage: %s <filename>\n", argv[0]);
 		return 1;
 	}
-
-	parserutils_charset_aliases_create(argv[1], myrealloc, NULL);
-
-#ifndef NDEBUG
-	parserutils_charset_aliases_dump();
-#endif
 
 	c = parserutils_charset_alias_canonicalise("moose", 5);
 	if (c) {
@@ -64,8 +49,6 @@ int main (int argc, char **argv)
 		printf("FAIL - failed finding encoding 'u.t.f.8'\n");
 		return 1;
 	}
-
-	parserutils_charset_aliases_destroy(myrealloc, NULL);
 
 	printf("PASS\n");
 

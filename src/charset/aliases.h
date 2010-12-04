@@ -13,24 +13,14 @@
 #include <parserutils/charset/mibenum.h>
 
 typedef struct parserutils_charset_aliases_canon {
-	struct parserutils_charset_aliases_canon *next;
+	/* Do not change the ordering here without changing make-aliases.pl */
 	uint16_t mib_enum;
 	uint16_t name_len;
-	char name[1];
+	const char *name;
 } parserutils_charset_aliases_canon;
-
-/* Load encoding aliases from file */
-parserutils_error parserutils_charset_aliases_create(const char *filename,
-		parserutils_alloc alloc, void *pw);
-/* Destroy encoding aliases */
-void parserutils_charset_aliases_destroy(parserutils_alloc alloc, void *pw);
 
 /* Canonicalise an alias name */
 parserutils_charset_aliases_canon *parserutils_charset_alias_canonicalise(
 		const char *alias, size_t len);
-
-#ifndef NDEBUG
-void parserutils_charset_aliases_dump(void);
-#endif
 
 #endif

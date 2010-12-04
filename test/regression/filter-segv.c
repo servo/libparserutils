@@ -23,15 +23,10 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	assert(parserutils_initialise(argv[1], myrealloc, NULL) == 
-			PARSERUTILS_OK);
-
 	assert(parserutils_filter_create("UTF-8", myrealloc, NULL, &input) ==
 			PARSERUTILS_OK);
 
 	parserutils_filter_destroy(input);
-
-	assert(parserutils_finalise(myrealloc, NULL) == PARSERUTILS_OK);
 
 	printf("PASS\n");
 

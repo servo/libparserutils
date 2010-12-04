@@ -2,7 +2,6 @@
 #
 # Test		Description				DataDir
 
-cscodec-segv	Segfault in charset codecs
 filter-segv	Segfault in input filtering
 stream-nomem	Inputstream buffer expansion
 filter-badenc-segv	Segfault on resetting bad encoding in filter

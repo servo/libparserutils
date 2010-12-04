@@ -6,7 +6,6 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-#include "charset/charset.h"
 #include <parserutils/charset/codec.h>
 
 #include "utils/utils.h"
@@ -50,9 +49,6 @@ int main(int argc, char **argv)
 		printf("Usage: %s <aliases_file> <filename>\n", argv[0]);
 		return 1;
 	}
-
-	assert(parserutils_charset_initialise(argv[1], myrealloc, NULL) == 
-			PARSERUTILS_OK);
 
 	assert(parserutils_charset_codec_create("NATS-SEFI-ADD",
 			myrealloc, NULL, &codec) == PARSERUTILS_BADENCODING);
@@ -100,9 +96,6 @@ int main(int argc, char **argv)
 	free(ctx.buf);
 
 	parserutils_charset_codec_destroy(ctx.codec);
-
-	assert(parserutils_charset_finalise(myrealloc, NULL) == 
-			PARSERUTILS_OK);
 
 	printf("PASS\n");
 
