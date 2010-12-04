@@ -27,10 +27,8 @@ int main(int argc, char **argv)
 	const uint8_t *in = inbuf;
 	uint8_t *out = outbuf;
 
-	if (argc != 2) {
-		printf("Usage: %s <filename>\n", argv[0]);
-		return 1;
-	}
+	UNUSED(argc);
+	UNUSED(argv);
 
 	/* Create input filter */
 	assert(parserutils_filter_create("UTF-8", myrealloc, NULL, &input) ==

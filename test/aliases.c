@@ -9,10 +9,8 @@ int main (int argc, char **argv)
 {
 	parserutils_charset_aliases_canon *c;
 
-	if (argc != 2) {
-		printf("Usage: %s <filename>\n", argv[0]);
-		return 1;
-	}
+	UNUSED(argc);
+	UNUSED(argv);
 
 	c = parserutils_charset_alias_canonicalise("moose", 5);
 	if (c) {

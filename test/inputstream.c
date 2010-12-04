@@ -31,17 +31,17 @@ int main(int argc, char **argv)
 	const uint8_t *c;
 	size_t clen;
 
-	if (argc != 3) {
-		printf("Usage: %s <aliases_file> <filename>\n", argv[0]);
+	if (argc != 2) {
+		printf("Usage: %s <filename>\n", argv[0]);
 		return 1;
 	}
 
 	assert(parserutils_inputstream_create("UTF-8", 1, NULL,
 			myrealloc, NULL, &stream) == PARSERUTILS_OK);
 
-	fp = fopen(argv[2], "rb");
+	fp = fopen(argv[1], "rb");
 	if (fp == NULL) {
-		printf("Failed opening %s\n", argv[2]);
+		printf("Failed opening %s\n", argv[1]);
 		return 1;
 	}
 

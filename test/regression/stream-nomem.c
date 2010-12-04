@@ -29,10 +29,8 @@ int main(int argc, char **argv)
 	const uint8_t *c;
 	size_t clen;
 
-	if (argc != 2) {
-		printf("Usage: %s <aliases_file>\n", argv[0]);
-		return 1;
-	}
+	UNUSED(argc);
+	UNUSED(argv);
 
 	/* Populate the buffer with something sane */
 	memset(input_buffer, 'a', BUFFER_SIZE);

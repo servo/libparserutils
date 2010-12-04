@@ -18,10 +18,8 @@ int main(int argc, char **argv)
 {
 	parserutils_filter *input;
 
-	if (argc != 2) {
-		printf("Usage: %s <filename>\n", argv[0]);
-		return 1;
-	}
+	UNUSED(argc);
+	UNUSED(argv);
 
 	assert(parserutils_filter_create("UTF-8", myrealloc, NULL, &input) ==
 			PARSERUTILS_OK);
