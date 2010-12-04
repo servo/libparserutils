@@ -62,6 +62,10 @@ static int parserutils_charset_alias_match(const void *a, const void *b)
                 s_alias++;
         }
         
+        while ((key_left > 0) && IS_PUNCT_OR_SPACE(*s_key)) {
+          key_left--; s_key++;
+        }
+        
         return key_left - alias_left;
 }
 

@@ -28,6 +28,14 @@ int main (int argc, char **argv)
 		return 1;
 	}
 
+	c = parserutils_charset_alias_canonicalise("csinvariant\"", 12);
+	if (c) {
+		printf("%s %d\n", c->name, c->mib_enum);
+	} else {
+		printf("FAIL - failed finding encoding 'csinvariant'\n");
+		return 1;
+	}
+
 	c = parserutils_charset_alias_canonicalise("nats-sefi-add", 13);
 	if (c) {
 		printf("%s %d\n", c->name, c->mib_enum);
