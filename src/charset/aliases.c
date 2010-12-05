@@ -80,8 +80,11 @@ parserutils_charset_aliases_canon *parserutils_charset_alias_canonicalise(
 		const char *alias, size_t len)
 {
         parserutils_charset_aliases_alias *c;
-        lengthed_string s = {len, alias};
+        lengthed_string s;
         
+        s.s = alias;
+        s.slen = len;
+        s.s = alias;
         c = (parserutils_charset_aliases_alias*)bsearch(&s,
 		&charset_aliases[0],
 		charset_aliases_count,
