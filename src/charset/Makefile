@@ -7,6 +7,8 @@ $(DIR)aliases.inc: build/make-aliases.pl build/Aliases
 	$(VQ)$(ECHO) "   ALIAS: $@"
 	$(Q)$(PERL) build/make-aliases.pl
 
-CLEAN_ITEMS := $(CLEAN_ITEMS) $(DIR)aliases.inc
+ifeq ($(findstring clean,$(MAKECMDGOALS)),clean)
+  CLEAN_ITEMS := $(CLEAN_ITEMS) $(DIR)aliases.inc
+endif
 
 include build/makefiles/Makefile.subdir
