@@ -76,7 +76,7 @@ static int parserutils_charset_alias_match(const void *a, const void *b)
  * \param len    The length of the alias name
  * \return Pointer to canonical form or NULL if not found
  */
-parserutils_charset_aliases_canon *parserutils_charset_alias_canonicalise(
+parserutils_charset_aliases_canon *parserutils__charset_alias_canonicalise(
 		const char *alias, size_t len)
 {
         parserutils_charset_aliases_alias *c;
@@ -111,7 +111,7 @@ uint16_t parserutils_charset_mibenum_from_name(const char *alias, size_t len)
 	if (alias == NULL)
 		return 0;
 
-	c = parserutils_charset_alias_canonicalise(alias, len);
+	c = parserutils__charset_alias_canonicalise(alias, len);
 	if (c == NULL)
 		return 0;
 

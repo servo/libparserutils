@@ -31,12 +31,12 @@ int main(int argc, char **argv)
 	UNUSED(argv);
 
 	/* Create input filter */
-	assert(parserutils_filter_create("UTF-8", myrealloc, NULL, &input) ==
+	assert(parserutils__filter_create("UTF-8", myrealloc, NULL, &input) ==
 			PARSERUTILS_OK);
 
 	/* Convert filter to UTF-8 encoding */
 	params.encoding.name = "UTF-8";
-	assert(parserutils_filter_setopt(input, PARSERUTILS_FILTER_SET_ENCODING,
+	assert(parserutils__filter_setopt(input, PARSERUTILS_FILTER_SET_ENCODING,
 			(parserutils_filter_optparams *) &params) == 
 			PARSERUTILS_OK);
 
@@ -49,14 +49,14 @@ int main(int argc, char **argv)
 	outbuf[0] = '\0';
 	outlen = 64;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
 			(int) (out - ((uint8_t *) outbuf)),
 			outbuf, (int) outlen);
 
-	assert(parserutils_filter_reset(input) == PARSERUTILS_OK);
+	assert(parserutils__filter_reset(input) == PARSERUTILS_OK);
 
 	assert(memcmp(outbuf, "hell\xc2\xa0o!",
 			SLEN("hell\xc2\xa0o!")) == 0);
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 	outbuf[0] = '\0';
 	outlen = 5;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_NOMEM);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
@@ -79,14 +79,14 @@ int main(int argc, char **argv)
 
 	outlen = 64 - 5 + outlen;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
 			(int) (out - ((uint8_t *) outbuf)),
 			outbuf, (int) outlen);
 
-	assert(parserutils_filter_reset(input) == PARSERUTILS_OK);
+	assert(parserutils__filter_reset(input) == PARSERUTILS_OK);
 
 	assert(memcmp(outbuf, "hello!",
 			SLEN("hello!")) == 0);
@@ -102,14 +102,14 @@ int main(int argc, char **argv)
 
 	/* Input does loose decoding, converting to U+FFFD if illegal
 	 * input is encountered */
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
 			(int) (out - ((uint8_t *) outbuf)),
 			outbuf, (int) outlen);
 
-	assert(parserutils_filter_reset(input) == PARSERUTILS_OK);
+	assert(parserutils__filter_reset(input) == PARSERUTILS_OK);
 
 	assert(memcmp(outbuf, "hell\xef\xbf\xbdo!",
 			SLEN("hell\xef\xbf\xbdo!")) == 0);
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 	outbuf[0] = '\0';
 	outlen = 64;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
@@ -132,14 +132,14 @@ int main(int argc, char **argv)
 
 	inlen += 3;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
 			(int) (out - ((uint8_t *) outbuf)),
 			outbuf, (int) outlen);
 
-	assert(parserutils_filter_reset(input) == PARSERUTILS_OK);
+	assert(parserutils__filter_reset(input) == PARSERUTILS_OK);
 
 	assert(memcmp(outbuf, "hell\xc2\xa0o!",
 			SLEN("hell\xc2\xa0o!")) == 0);
@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 	outbuf[0] = '\0';
 	outlen = 64;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
@@ -164,7 +164,7 @@ int main(int argc, char **argv)
 	inlen += 3;
 	outlen = 3;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_NOMEM);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
@@ -173,14 +173,14 @@ int main(int argc, char **argv)
 
 	outlen = 64 - 7;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
 			(int) (out - ((uint8_t *) outbuf)),
 			outbuf, (int) outlen);
 
-	assert(parserutils_filter_reset(input) == PARSERUTILS_OK);
+	assert(parserutils__filter_reset(input) == PARSERUTILS_OK);
 
 	assert(memcmp(outbuf, "hell\xc2\xa0o!",
 			SLEN("hell\xc2\xa0o!")) == 0);
@@ -195,7 +195,7 @@ int main(int argc, char **argv)
 	outbuf[0] = '\0';
 	outlen = 64;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
@@ -205,7 +205,7 @@ int main(int argc, char **argv)
 	inlen += 3;
 	outlen = 1;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_NOMEM);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
@@ -214,14 +214,14 @@ int main(int argc, char **argv)
 
 	outlen = 60;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
 			(int) (out - ((uint8_t *) outbuf)),
 			outbuf, (int) outlen);
 
-	assert(parserutils_filter_reset(input) == PARSERUTILS_OK);
+	assert(parserutils__filter_reset(input) == PARSERUTILS_OK);
 
 	assert(memcmp(outbuf, "hell\xc2\xa0o!",
 			SLEN("hell\xc2\xa0o!")) == 0);
@@ -236,7 +236,7 @@ int main(int argc, char **argv)
 	outbuf[0] = '\0';
 	outlen = 64;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
@@ -247,14 +247,14 @@ int main(int argc, char **argv)
 
 	/* Input does loose decoding, converting to U+FFFD if illegal
 	 * input is encountered */
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
 			(int) (out - ((uint8_t *) outbuf)),
 			outbuf, (int) outlen);
 
-	assert(parserutils_filter_reset(input) == PARSERUTILS_OK);
+	assert(parserutils__filter_reset(input) == PARSERUTILS_OK);
 
 	assert(memcmp(outbuf, "hell\xef\xbf\xbd\xef\xbf\xbdo!",
 			SLEN("hell\xef\xbf\xbd\xef\xbf\xbdo!")) == 0);
@@ -269,7 +269,7 @@ int main(int argc, char **argv)
 	outbuf[0] = '\0';
 	outlen = 64;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
@@ -278,7 +278,7 @@ int main(int argc, char **argv)
 
 	inlen += 2;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
@@ -287,14 +287,14 @@ int main(int argc, char **argv)
 
 	inlen += 3;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
 			(int) (out - ((uint8_t *) outbuf)),
 			outbuf, (int) outlen);
 
-	assert(parserutils_filter_reset(input) == PARSERUTILS_OK);
+	assert(parserutils__filter_reset(input) == PARSERUTILS_OK);
 
 	assert(memcmp(outbuf, "hell\xc2\xa0\xc2\xa1o!",
 			SLEN("hell\xc2\xa0\xc2\xa1o!")) == 0);
@@ -309,7 +309,7 @@ int main(int argc, char **argv)
 	outbuf[0] = '\0';
 	outlen = 64;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
@@ -318,7 +318,7 @@ int main(int argc, char **argv)
 
 	inlen += 1;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
@@ -327,21 +327,21 @@ int main(int argc, char **argv)
 
 	inlen += 3;
 
-	assert(parserutils_filter_process_chunk(input, &in, &inlen,
+	assert(parserutils__filter_process_chunk(input, &in, &inlen,
 			&out, &outlen) == PARSERUTILS_OK);
 
 	printf("'%.*s' %d '%.*s' %d\n", (int) inlen, in, (int) inlen,
 			(int) (out - ((uint8_t *) outbuf)),
 			outbuf, (int) outlen);
 
-	assert(parserutils_filter_reset(input) == PARSERUTILS_OK);
+	assert(parserutils__filter_reset(input) == PARSERUTILS_OK);
 
 	assert(memcmp(outbuf, "hell\xe2\x80\xa2o!",
 			SLEN("hell\xe2\x80\xa2o!")) == 0);
 
 
 	/* Clean up */
-	parserutils_filter_destroy(input);
+	parserutils__filter_destroy(input);
 
 	printf("PASS\n");
 

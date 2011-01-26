@@ -60,7 +60,7 @@ static parserutils_error filter_set_encoding(parserutils_filter *input,
  *         PARSERUTILS_NOMEM on memory exhausion,
  *         PARSERUTILS_BADENCODING if the encoding is unsupported
  */
-parserutils_error parserutils_filter_create(const char *int_enc,
+parserutils_error parserutils__filter_create(const char *int_enc,
 		parserutils_alloc alloc, void *pw, parserutils_filter **filter)
 {
 	parserutils_filter *f;
@@ -120,7 +120,7 @@ parserutils_error parserutils_filter_create(const char *int_enc,
  * \param input  Pointer to filter instance
  * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
-parserutils_error parserutils_filter_destroy(parserutils_filter *input)
+parserutils_error parserutils__filter_destroy(parserutils_filter *input)
 {
 	if (input == NULL)
 		return PARSERUTILS_BADPARM;
@@ -155,7 +155,7 @@ parserutils_error parserutils_filter_destroy(parserutils_filter *input)
  * \param params  Option-specific parameters
  * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
-parserutils_error parserutils_filter_setopt(parserutils_filter *input,
+parserutils_error parserutils__filter_setopt(parserutils_filter *input,
 		parserutils_filter_opttype type,
 		parserutils_filter_optparams *params)
 {
@@ -185,7 +185,7 @@ parserutils_error parserutils_filter_setopt(parserutils_filter *input,
  *
  * Call this with an input buffer length of 0 to flush any buffers.
  */
-parserutils_error parserutils_filter_process_chunk(parserutils_filter *input,
+parserutils_error parserutils__filter_process_chunk(parserutils_filter *input,
 		const uint8_t **data, size_t *len,
 		uint8_t **output, size_t *outlen)
 {
@@ -307,7 +307,7 @@ parserutils_error parserutils_filter_process_chunk(parserutils_filter *input,
  * \param input  The input filter to reset
  * \return PARSERUTILS_OK on success, appropriate error otherwise
  */
-parserutils_error parserutils_filter_reset(parserutils_filter *input)
+parserutils_error parserutils__filter_reset(parserutils_filter *input)
 {
 	parserutils_error error = PARSERUTILS_OK;
 

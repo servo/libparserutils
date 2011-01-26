@@ -50,7 +50,7 @@ parserutils_error parserutils_charset_codec_create(const char *charset,
 		return PARSERUTILS_BADPARM;
 
 	/* Canonicalise parserutils_charset name. */
-	canon = parserutils_charset_alias_canonicalise(charset, 
+	canon = parserutils__charset_alias_canonicalise(charset, 
 			strlen(charset));
 	if (canon == NULL)
 		return PARSERUTILS_BADENCODING;

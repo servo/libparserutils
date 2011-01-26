@@ -29,20 +29,20 @@ int main(int argc, char **argv)
 	UNUSED(argc);
 	UNUSED(argv);
 
-	assert(parserutils_filter_create("UTF-8", myrealloc, NULL, &input) ==
+	assert(parserutils__filter_create("UTF-8", myrealloc, NULL, &input) ==
 			PARSERUTILS_OK);
 
 	params.encoding.name = "GBK";
-	assert(parserutils_filter_setopt(input, 
+	assert(parserutils__filter_setopt(input, 
 			PARSERUTILS_FILTER_SET_ENCODING, &params) == 
 			expected);
 
 	params.encoding.name = "GBK";
-	assert(parserutils_filter_setopt(input, 
+	assert(parserutils__filter_setopt(input, 
 			PARSERUTILS_FILTER_SET_ENCODING, &params) == 
 			expected);
 
-	parserutils_filter_destroy(input);
+	parserutils__filter_destroy(input);
 
 	printf("PASS\n");
 

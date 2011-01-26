@@ -12,13 +12,13 @@ int main (int argc, char **argv)
 	UNUSED(argc);
 	UNUSED(argv);
 
-	c = parserutils_charset_alias_canonicalise("moose", 5);
+	c = parserutils__charset_alias_canonicalise("moose", 5);
 	if (c) {
 		printf("FAIL - found invalid encoding 'moose'\n");
 		return 1;
 	}
 
-	c = parserutils_charset_alias_canonicalise("csinvariant", 11);
+	c = parserutils__charset_alias_canonicalise("csinvariant", 11);
 	if (c) {
 		printf("%s %d\n", c->name, c->mib_enum);
 	} else {
@@ -26,7 +26,7 @@ int main (int argc, char **argv)
 		return 1;
 	}
 
-	c = parserutils_charset_alias_canonicalise("csinvariant\"", 12);
+	c = parserutils__charset_alias_canonicalise("csinvariant\"", 12);
 	if (c) {
 		printf("%s %d\n", c->name, c->mib_enum);
 	} else {
@@ -34,7 +34,7 @@ int main (int argc, char **argv)
 		return 1;
 	}
 
-	c = parserutils_charset_alias_canonicalise("nats-sefi-add", 13);
+	c = parserutils__charset_alias_canonicalise("nats-sefi-add", 13);
 	if (c) {
 		printf("%s %d\n", c->name, c->mib_enum);
 	} else {
@@ -48,7 +48,7 @@ int main (int argc, char **argv)
 	printf("%s\n", parserutils_charset_mibenum_to_name(c->mib_enum));
 
 
-	c = parserutils_charset_alias_canonicalise("u.t.f.8", 7);
+	c = parserutils__charset_alias_canonicalise("u.t.f.8", 7);
 	if (c) {
 		printf("%s %d\n", c->name, c->mib_enum);
 	} else {

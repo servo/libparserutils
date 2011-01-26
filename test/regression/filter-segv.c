@@ -21,10 +21,10 @@ int main(int argc, char **argv)
 	UNUSED(argc);
 	UNUSED(argv);
 
-	assert(parserutils_filter_create("UTF-8", myrealloc, NULL, &input) ==
+	assert(parserutils__filter_create("UTF-8", myrealloc, NULL, &input) ==
 			PARSERUTILS_OK);
 
-	parserutils_filter_destroy(input);
+	parserutils__filter_destroy(input);
 
 	printf("PASS\n");
 

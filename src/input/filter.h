@@ -35,23 +35,23 @@ typedef union parserutils_filter_optparams {
 
 
 /* Create an input filter */
-parserutils_error parserutils_filter_create(const char *int_enc,
+parserutils_error parserutils__filter_create(const char *int_enc,
 		parserutils_alloc alloc, void *pw, parserutils_filter **filter);
 /* Destroy an input filter */
-parserutils_error parserutils_filter_destroy(parserutils_filter *input);
+parserutils_error parserutils__filter_destroy(parserutils_filter *input);
 
 /* Configure an input filter */
-parserutils_error parserutils_filter_setopt(parserutils_filter *input,
+parserutils_error parserutils__filter_setopt(parserutils_filter *input,
 		parserutils_filter_opttype type,
 		parserutils_filter_optparams *params);
 
 /* Process a chunk of data */
-parserutils_error parserutils_filter_process_chunk(parserutils_filter *input,
+parserutils_error parserutils__filter_process_chunk(parserutils_filter *input,
 		const uint8_t **data, size_t *len,
 		uint8_t **output, size_t *outlen);
 
 /* Reset an input filter's state */
-parserutils_error parserutils_filter_reset(parserutils_filter *input);
+parserutils_error parserutils__filter_reset(parserutils_filter *input);
 
 #endif
 

@@ -93,7 +93,7 @@ parserutils_error parserutils_inputstream_create(const char *enc,
 	s->public.had_eof = false;
 	s->done_first_chunk = false;
 
-	error = parserutils_filter_create("UTF-8", alloc, pw, &s->input);
+	error = parserutils__filter_create("UTF-8", alloc, pw, &s->input);
 	if (error != PARSERUTILS_OK) {
 		parserutils_buffer_destroy(s->public.utf8);
 		parserutils_buffer_destroy(s->raw);
@@ -112,11 +112,11 @@ parserutils_error parserutils_inputstream_create(const char *enc,
 
 		params.encoding.name = enc;
 
-		error = parserutils_filter_setopt(s->input,
+		error = parserutils__filter_setopt(s->input,
 				PARSERUTILS_FILTER_SET_ENCODING, 
 				&params);
 		if (error != PARSERUTILS_OK) {
-			parserutils_filter_destroy(s->input);
+			parserutils__filter_destroy(s->input);
 			parserutils_buffer_destroy(s->public.utf8);
 			parserutils_buffer_destroy(s->raw);
 			alloc(s, 0, pw);
@@ -154,7 +154,7 @@ parserutils_error parserutils_inputstream_destroy(
 	if (stream == NULL)
 		return PARSERUTILS_BADPARM;
 
-	parserutils_filter_destroy(s->input);
+	parserutils__filter_destroy(s->input);
 	parserutils_buffer_destroy(s->public.utf8);
 	parserutils_buffer_destroy(s->raw);
 	s->alloc(s, 0, s->pw);
@@ -344,7 +344,7 @@ parserutils_error parserutils_inputstream_change_charset(
 
 	/* Ensure filter is using the correct encoding */
 	params.encoding.name = enc;
-	error = parserutils_filter_setopt(s->input,
+	error = parserutils__filter_setopt(s->input,
 			PARSERUTILS_FILTER_SET_ENCODING, 
 			&params);
 	if (error != PARSERUTILS_OK)
@@ -424,7 +424,7 @@ parserutils_error parserutils_inputstream_refill_buffer(
 		params.encoding.name = 
 			parserutils_charset_mibenum_to_name(stream->mibenum);
 
-		error = parserutils_filter_setopt(stream->input,
+		error = parserutils__filter_setopt(stream->input,
 				PARSERUTILS_FILTER_SET_ENCODING, 
 				&params);
 		if (error != PARSERUTILS_OK)
@@ -469,7 +469,7 @@ parserutils_error parserutils_inputstream_refill_buffer(
 	raw_length = stream->raw->length;
 
 	/* Try to fill utf8 buffer from the raw data */
-	error = parserutils_filter_process_chunk(stream->input, 
+	error = parserutils__filter_process_chunk(stream->input, 
 			&raw, &raw_length, &utf8, &utf8_space);
 	/* _NOMEM implies that there's more input to read than available space
 	 * in the utf8 buffer. That's fine, so we'll ignore that error. */
