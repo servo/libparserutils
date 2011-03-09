@@ -194,7 +194,7 @@ parserutils_error parserutils__filter_process_chunk(parserutils_filter *input,
 		return PARSERUTILS_BADPARM;
 
 #ifdef WITH_ICONV_FILTER
-	if (iconv(input->cd, (char **) data, len, 
+	if (iconv(input->cd, (void *) data, len, 
 			(char **) output, outlen) == (size_t) -1) {
 		switch (errno) {
 		case E2BIG:
@@ -216,7 +216,7 @@ parserutils_error parserutils__filter_process_chunk(parserutils_filter *input,
 			while (*len > 0) {
 				size_t ret;
 				
-				ret = iconv(input->cd, (char **) data, len, 
+				ret = iconv(input->cd, (void *) data, len, 
 						(char **) output, outlen);
 				if (ret != (size_t) -1 || errno != EILSEQ)
 					break;
