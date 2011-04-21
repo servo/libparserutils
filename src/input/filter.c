@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef WITH_ICONV_FILTER
+#ifndef WITHOUT_ICONV_FILTER
 #include <iconv.h>
 #endif
 
@@ -22,7 +22,7 @@
 
 /** Input filter */
 struct parserutils_filter {
-#ifdef WITH_ICONV_FILTER
+#ifndef WITHOUT_ICONV_FILTER
 	iconv_t cd;			/**< Iconv conversion descriptor */
 	uint16_t int_enc;		/**< The internal encoding */
 #else
@@ -73,7 +73,7 @@ parserutils_error parserutils__filter_create(const char *int_enc,
 	if (f == NULL)
 		return PARSERUTILS_NOMEM;
 
-#ifdef WITH_ICONV_FILTER
+#ifndef WITHOUT_ICONV_FILTER
 	f->cd = (iconv_t) -1;
 	f->int_enc = parserutils_charset_mibenum_from_name(
 			int_enc, strlen(int_enc));
@@ -96,7 +96,7 @@ parserutils_error parserutils__filter_create(const char *int_enc,
 		return error;
 	}
 
-#ifndef WITH_ICONV_FILTER
+#ifdef WITHOUT_ICONV_FILTER
 	error = parserutils_charset_codec_create(int_enc, alloc, pw, 
 			&f->write_codec);
 	if (error != PARSERUTILS_OK) {
@@ -125,7 +125,7 @@ parserutils_error parserutils__filter_destroy(parserutils_filter *input)
 	if (input == NULL)
 		return PARSERUTILS_BADPARM;
 
-#ifdef WITH_ICONV_FILTER
+#ifndef WITHOUT_ICONV_FILTER
 	if (input->cd != (iconv_t) -1) {
 		iconv_close(input->cd);
 		input->cd = (iconv_t) -1;
@@ -193,7 +193,7 @@ parserutils_error parserutils__filter_process_chunk(parserutils_filter *input,
 			output == NULL || *output == NULL || outlen == NULL)
 		return PARSERUTILS_BADPARM;
 
-#ifdef WITH_ICONV_FILTER
+#ifndef WITHOUT_ICONV_FILTER
 	if (iconv(input->cd, (void *) data, len, 
 			(char **) output, outlen) == (size_t) -1) {
 		switch (errno) {
@@ -314,7 +314,7 @@ parserutils_error parserutils__filter_reset(parserutils_filter *input)
 	if (input == NULL)
 		return PARSERUTILS_BADPARM;
 
-#ifdef WITH_ICONV_FILTER
+#ifndef WITHOUT_ICONV_FILTER
 	iconv(input->cd, NULL, 0, NULL, 0);
 #else
 	/* Clear pivot buffer leftovers */
@@ -349,7 +349,7 @@ parserutils_error filter_set_defaults(parserutils_filter *input)
 	if (input == NULL)
 		return PARSERUTILS_BADPARM;
 
-#ifndef WITH_ICONV_FILTER
+#ifdef WITHOUT_ICONV_FILTER
 	input->read_codec = NULL;
 	input->write_codec = NULL;
 #endif
@@ -386,7 +386,7 @@ parserutils_error filter_set_encoding(parserutils_filter *input,
 	if (input->settings.encoding == mibenum)
 		return PARSERUTILS_OK;
 
-#ifdef WITH_ICONV_FILTER
+#ifndef WITHOUT_ICONV_FILTER
 	if (input->cd != (iconv_t) -1) {
 		iconv_close(input->cd);
 		input->cd = (iconv_t) -1;

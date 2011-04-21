@@ -24,8 +24,10 @@ Requirements
     + Pkg-config (for the testcases)
     + doxygen (for the API documentation)
 
-  For enhanced charset support, LibParserUtils may also be configured to use
-  an iconv() implementation, see the "Enabling iconv() support" section, below.
+  For enhanced charset support, LibParserUtils requires an iconv() 
+  implementation. If you don't have an implementation of iconv(),
+  this requirement may be disabled: see the "Disabling iconv() 
+  support" section, below.
 
 Compilation
 -----------
@@ -100,10 +102,11 @@ API documentation
 
   The test driver code in test/ may also provide some useful pointers.
 
-Enabling iconv() support
-------------------------
+Disabling iconv() support
+-------------------------
 
-  By default, libparserutils only supports the following character sets:
+  Without iconv() support enabled, libparserutils only supports the 
+  following character sets:
 
     + UTF-16 (platform-native endian)
     + UTF-8
@@ -111,19 +114,10 @@ Enabling iconv() support
     + Windows-125n
     + US-ASCII
 
-  Support for more character sets may be enabled through the use of iconv().
-  To enable iconv() support in libparserutils, do the following:
+  To disable iconv() support in libparserutils, do the following:
 
-  		$ echo "CFLAGS += -DWITH_ICONV_FILTER" \
+  		$ echo "CFLAGS += -DWITHOUT_ICONV_FILTER" \
 				>build/Makefile.config.override
 
   Then build libparserutils as normal.
-
-A note on character set aliases
--------------------------------
-
-  Libparserutils uses an external mapping file to encode relationships between
-  character set names. This is the "Aliases" file. A copy may be found at
-  test/data/Aliases. The path to this file is required when calling
-  parserutils_initialise().
 

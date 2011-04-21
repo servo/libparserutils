@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 	parserutils_filter_optparams params;
 	parserutils_error expected;
 
-#ifdef WITH_ICONV_FILTER
+#ifndef WITHOUT_ICONV_FILTER
 	expected = PARSERUTILS_OK;
 #else
 	expected = PARSERUTILS_BADENCODING;
