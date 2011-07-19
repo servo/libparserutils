@@ -41,7 +41,7 @@ typedef struct parserutils_inputstream_private {
 static inline parserutils_error parserutils_inputstream_refill_buffer(
 		parserutils_inputstream_private *stream);
 static inline parserutils_error parserutils_inputstream_strip_bom(
-		uint16_t mibenum, parserutils_buffer *buffer);
+		uint16_t *mibenum, parserutils_buffer *buffer);
 
 /**
  * Create an input stream
@@ -420,6 +420,12 @@ parserutils_error parserutils_inputstream_refill_buffer(
 		if (stream->mibenum == 0)
 			abort();
 
+		/* Strip any BOM, and update encoding as appropriate */
+		error = parserutils_inputstream_strip_bom(&stream->mibenum, 
+				stream->raw);
+		if (error != PARSERUTILS_OK)
+			return error;
+
 		/* Ensure filter is using the correct encoding */
 		params.encoding.name = 
 			parserutils_charset_mibenum_to_name(stream->mibenum);
@@ -427,11 +433,6 @@ parserutils_error parserutils_inputstream_refill_buffer(
 		error = parserutils__filter_setopt(stream->input,
 				PARSERUTILS_FILTER_SET_ENCODING, 
 				&params);
-		if (error != PARSERUTILS_OK)
-			return error;
-
-		error = parserutils_inputstream_strip_bom(stream->mibenum, 
-				stream->raw);
 		if (error != PARSERUTILS_OK)
 			return error;
 
@@ -495,10 +496,10 @@ parserutils_error parserutils_inputstream_refill_buffer(
 /**
  * Strip a BOM from a buffer in the given encoding
  *
- * \param mibenum  The character set of the buffer
+ * \param mibenum  Pointer to the character set of the buffer, updated on exit
  * \param buffer   The buffer to process
  */
-parserutils_error parserutils_inputstream_strip_bom(uint16_t mibenum, 
+parserutils_error parserutils_inputstream_strip_bom(uint16_t *mibenum, 
 		parserutils_buffer *buffer)
 {
 	static uint16_t utf8;
@@ -530,7 +531,7 @@ parserutils_error parserutils_inputstream_strip_bom(uint16_t mibenum,
 #define UTF16_BOM_LEN (2)
 #define UTF8_BOM_LEN  (3)
 
-	if (mibenum == utf8) {
+	if (*mibenum == utf8) {
 		if (buffer->length >= UTF8_BOM_LEN && 
 				buffer->data[0] == 0xEF &&
 				buffer->data[1] == 0xBB && 
@@ -538,21 +539,36 @@ parserutils_error parserutils_inputstream_strip_bom(uint16_t mibenum,
 			return parserutils_buffer_discard(
 					buffer, 0, UTF8_BOM_LEN);
 		}
-	} else if (mibenum == utf16be) {
+	} else if (*mibenum == utf16be) {
 		if (buffer->length >= UTF16_BOM_LEN &&
 				buffer->data[0] == 0xFE &&
 				buffer->data[1] == 0xFF) {
 			return parserutils_buffer_discard(
 					buffer, 0, UTF16_BOM_LEN);
 		}
-	} else if (mibenum == utf16le) {
+	} else if (*mibenum == utf16le) {
 		if (buffer->length >= UTF16_BOM_LEN &&
 				buffer->data[0] == 0xFF &&
 				buffer->data[1] == 0xFE) {
 			return parserutils_buffer_discard(
 					buffer, 0, UTF16_BOM_LEN);
 		}
-	} else if (mibenum == utf32be) {
+	} else if (*mibenum == utf16) {
+		*mibenum = utf16be;
+
+		if (buffer->length >= UTF16_BOM_LEN) {
+			if (buffer->data[0] == 0xFE && 
+					buffer->data[1] == 0xFF) {
+				return parserutils_buffer_discard(
+						buffer, 0, UTF16_BOM_LEN);
+			} else if (buffer->data[0] == 0xFF && 
+					buffer->data[1] == 0xFE) {
+				*mibenum = utf16le;
+				return parserutils_buffer_discard(
+						buffer, 0, UTF16_BOM_LEN);
+			}
+		}
+	} else if (*mibenum == utf32be) {
 		if (buffer->length >= UTF32_BOM_LEN &&
 				buffer->data[0] == 0x00 &&
 				buffer->data[1] == 0x00 &&
@@ -561,7 +577,7 @@ parserutils_error parserutils_inputstream_strip_bom(uint16_t mibenum,
 			return parserutils_buffer_discard(
 					buffer, 0, UTF32_BOM_LEN);
 		}
-	} else if (mibenum == utf32le) {
+	} else if (*mibenum == utf32le) {
 		if (buffer->length >= UTF32_BOM_LEN &&
 				buffer->data[0] == 0xFF &&
 				buffer->data[1] == 0xFE &&
@@ -569,6 +585,25 @@ parserutils_error parserutils_inputstream_strip_bom(uint16_t mibenum,
 				buffer->data[3] == 0x00) {
 			return parserutils_buffer_discard(
 					buffer, 0, UTF32_BOM_LEN);
+		}
+	} else if (*mibenum == utf32) {
+		*mibenum = utf32be;
+
+		if (buffer->length >= UTF32_BOM_LEN) {
+			if (buffer->data[0] == 0x00 && 
+					buffer->data[1] == 0x00 &&
+					buffer->data[2] == 0xFE &&
+					buffer->data[3] == 0xFF) {
+				return parserutils_buffer_discard(
+						buffer, 0, UTF32_BOM_LEN);
+			} else if (buffer->data[0] == 0xFF && 
+					buffer->data[1] == 0xFE &&
+					buffer->data[2] == 0x00 &&
+					buffer->data[3] == 0x00) {
+				*mibenum = utf32le;
+				return parserutils_buffer_discard(
+						buffer, 0, UTF32_BOM_LEN);
+			}
 		}
 	}
 
