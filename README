@@ -117,7 +117,7 @@ Disabling iconv() support
   To disable iconv() support in libparserutils, do the following:
 
   		$ echo "CFLAGS += -DWITHOUT_ICONV_FILTER" \
-				>build/Makefile.config.override
+				>Makefile.config.override
 
   Then build libparserutils as normal.
 
