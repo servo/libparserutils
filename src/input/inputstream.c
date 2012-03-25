@@ -399,7 +399,6 @@ parserutils_error parserutils_inputstream_refill_buffer(
 				 * inputstream was created will be preserved.
 				 * If there was no charset specified, then
 				 * we'll default to UTF-8, below */
-				error = PARSERUTILS_OK;
 			}
 		}
 
