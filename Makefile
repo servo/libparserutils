@@ -5,9 +5,11 @@ COMPONENT_VERSION := 0.1.1
 COMPONENT_TYPE ?= lib-static
 
 # Setup the tooling
-include build/makefiles/Makefile.tools
+PREFIX ?= /opt/netsurf
+NSSHARED ?= $(PREFIX)/share/netsurf-buildsystem
+include $(NSSHARED)/makefiles/Makefile.tools
 
-TESTRUNNER := $(PERL) build/testtools/testrunner.pl
+TESTRUNNER := $(PERL) $(NSTESTTOOLS)/testrunner.pl
 
 # Toolchain flags
 WARNFLAGS := -Wall -W -Wundef -Wpointer-arith -Wcast-align \
@@ -27,7 +29,7 @@ else
   CFLAGS := $(CFLAGS) -Dinline="__inline__"
 endif
 
-include build/makefiles/Makefile.top
+include $(NSBUILD)/Makefile.top
 
 # Extra installation rules
 Is := include/parserutils

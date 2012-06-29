@@ -1,2 +1,2 @@
 
-include build/makefiles/Makefile.subdir
+include $(NSBUILD)/Makefile.subdir

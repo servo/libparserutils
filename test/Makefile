@@ -4,4 +4,4 @@ DIR_TEST_ITEMS := aliases:aliases.c cscodec-8859:cscodec-8859.c \
 	cscodec-utf16:cscodec-utf16.c filter:filter.c \
 	inputstream:inputstream.c
 
-include build/makefiles/Makefile.subdir
+include $(NSBUILD)/Makefile.subdir

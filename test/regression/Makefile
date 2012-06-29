@@ -4,4 +4,4 @@ DIR_TEST_ITEMS := filter-segv:filter-segv.c \
 
 CFLAGS := $(CFLAGS) -I$(CURDIR)/test
 
-include build/makefiles/Makefile.subdir
+include $(NSBUILD)/Makefile.subdir
