@@ -61,6 +61,11 @@ int main(int argc, char **argv)
 		while (parserutils_inputstream_peek(stream, 0, &c, &clen) !=
 				PARSERUTILS_NEEDDATA) {
 			parserutils_inputstream_advance(stream, clen);
+			if (*c == 'a') {
+				assert(parserutils_inputstream_insert(stream,
+						(const uint8_t *) "hello!!!",
+						SLEN("hello!!!")) == PARSERUTILS_OK);
+			}
 		}
 	}
 
