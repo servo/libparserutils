@@ -115,7 +115,7 @@ parserutils_error parserutils_buffer_insert(parserutils_buffer *buffer,
 			return error;
 	}
 
-	memmove(buffer->data + buffer->length + len, 
+	memmove(buffer->data + offset + len,
 			buffer->data + offset, buffer->length - offset);
 
 	memcpy(buffer->data + offset, data, len);
