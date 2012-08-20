@@ -1,0 +1,54 @@
+VPATH=..
+
+UNAME=$(shell uname)
+
+ifeq ($(UNAME),Darwin)
+    OSTYPE=darwin
+endif
+ifeq ($(UNAME),Linux)
+    OSTYPE=linux
+endif
+
+C_SRC= \
+	src/charset/aliases.c \
+	src/charset/codec.c \
+	src/charset/codecs/codec_8859.c \
+	src/charset/codecs/codec_ascii.c \
+	src/charset/codecs/codec_ext8.c \
+	src/charset/codecs/codec_utf16.c \
+	src/charset/codecs/codec_utf8.c \
+	src/charset/encodings/utf16.c \
+	src/charset/encodings/utf8.c \
+	src/input/filter.c \
+	src/input/inputstream.c \
+	src/utils/buffer.c \
+	src/utils/errors.c \
+	src/utils/stack.c \
+	src/utils/vector.c \
+	$(NULL)
+
+C_OBJS = $(patsubst %.c,%.o,$(C_SRC))
+CFLAGS += -I$(VPATH)/src -I$(VPATH)/include -fPIC
+
+.PHONY: all
+all: libparserutils.dummy
+
+src/charset/aliases.inc: $(VPATH)/build/make-aliases.pl $(VPATH)/build/Aliases
+	cd $(VPATH) && perl build/make-aliases.pl
+
+src/charset/aliases.c: src/charset/aliases.inc
+
+libparserutils.a: $(C_OBJS) src/charset/aliases.inc
+	$(AR) rcs $@ $^
+
+%.o: %.c
+	mkdir -p `dirname $@` && $(CC) $(CFLAGS) -o $@ -c $<
+
+libparserutils.dummy: libparserutils.a
+	touch $@
+
+.PHONY: clean
+clean:
+	rm -f *.so *.dylib *.dll *.dummy src/*.o
+	
+
