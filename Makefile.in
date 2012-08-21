@@ -28,17 +28,18 @@ C_SRC= \
 	$(NULL)
 
 C_OBJS = $(patsubst %.c,%.o,$(C_SRC))
-CFLAGS += -I$(VPATH)/src -I$(VPATH)/include -fPIC
+CFLAGS += -I$(VPATH)/src -Isrc/charset -I$(VPATH)/include -fPIC
 
 .PHONY: all
 all: libparserutils.dummy
 
 src/charset/aliases.inc: $(VPATH)/build/make-aliases.pl $(VPATH)/build/Aliases
 	cd $(VPATH) && perl build/make-aliases.pl
+	mv $(VPATH)/src/charset/aliases.inc src/charset
 
-src/charset/aliases.c: $(VPATH)/src/charset/aliases.inc
+src/charset/aliases.c: src/charset/aliases.inc
 
-libparserutils.a: $(C_OBJS) $(VPATH)/src/charset/aliases.inc
+libparserutils.a: $(C_OBJS) src/charset/aliases.inc
 	$(AR) rcs $@ $^
 
 %.o: %.c
@@ -50,5 +51,4 @@ libparserutils.dummy: libparserutils.a
 .PHONY: clean
 clean:
 	rm -f *.so *.dylib *.dll *.dummy src/*.o
-	
 
