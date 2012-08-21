@@ -1,4 +1,4 @@
-VPATH=..
+VPATH=%VPATH%
 
 UNAME=$(shell uname)
 
@@ -36,9 +36,9 @@ all: libparserutils.dummy
 src/charset/aliases.inc: $(VPATH)/build/make-aliases.pl $(VPATH)/build/Aliases
 	cd $(VPATH) && perl build/make-aliases.pl
 
-src/charset/aliases.c: src/charset/aliases.inc
+src/charset/aliases.c: $(VPATH)/src/charset/aliases.inc
 
-libparserutils.a: $(C_OBJS) src/charset/aliases.inc
+libparserutils.a: $(C_OBJS) $(VPATH)/src/charset/aliases.inc
 	$(AR) rcs $@ $^
 
 %.o: %.c
