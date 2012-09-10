@@ -35,6 +35,7 @@ all: libparserutils.dummy
 
 src/charset/aliases.inc: $(VPATH)/build/make-aliases.pl $(VPATH)/build/Aliases
 	cd $(VPATH) && perl build/make-aliases.pl
+	mkdir -p src/charset
 	mv $(VPATH)/src/charset/aliases.inc src/charset
 
 src/charset/aliases.c: src/charset/aliases.inc
