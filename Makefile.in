@@ -38,7 +38,7 @@ src/charset/aliases.inc: $(VPATH)/build/make-aliases.pl $(VPATH)/build/Aliases
 	mkdir -p src/charset
 	mv $(VPATH)/src/charset/aliases.inc src/charset
 
-src/charset/aliases.c: src/charset/aliases.inc
+$(VPATH)/src/charset/aliases.c: src/charset/aliases.inc
 
 libparserutils.a: $(C_OBJS) src/charset/aliases.inc
 	$(AR) rcs $@ $^
