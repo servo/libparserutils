@@ -49,6 +49,9 @@ libparserutils.a: $(C_OBJS) src/charset/aliases.inc
 libparserutils.dummy: libparserutils.a
 	touch $@
 
+.PHONY: check
+check:
+
 .PHONY: clean
 clean:
 	rm -f *.so *.dylib *.dll *.dummy src/*.o
