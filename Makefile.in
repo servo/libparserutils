@@ -8,6 +8,9 @@ endif
 ifeq ($(UNAME),Linux)
     OSTYPE=linux
 endif
+ifeq ($(CFG_OSTYPE),linux-androideabi)
+    OSTYPE=android
+endif
 
 C_SRC= \
 	src/charset/aliases.c \
@@ -29,6 +32,9 @@ C_SRC= \
 
 C_OBJS = $(patsubst %.c,%.o,$(C_SRC))
 CFLAGS += -I$(VPATH)/src -Isrc/charset -I$(VPATH)/include -fPIC
+ifeq ($(OSTYPE), android)
+    CFLAGS += -DWITHOUT_ICONV_FILTER
+endif
 
 .PHONY: all
 all: libparserutils.dummy
