@@ -1,0 +1,12 @@
+[package]
+
+name = "parserutils-sys"
+version = "0.1.1"
+authors = ["J-M Bell"]
+
+build = "make -f makefile.cargo"
+
+[lib]
+
+name = "parserutils-sys"
+path = "lib.rs"
