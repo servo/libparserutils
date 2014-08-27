@@ -1,4 +1,6 @@
 build-*
 Makefile.config.override
 src/charset/aliases.inc
-
+/target
+/doc
+/Cargo.lock
